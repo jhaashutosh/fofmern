@@ -17,7 +17,7 @@ app.listen(PORT,() => console.log(`Server running on port: http://localhost:${PO
 
 //Home Route
 app.get('/',(req,res) => {
-    res.send("Home Page!");
+    res.send("This is Home Page!");
 });
 
 //Connection to MongoDB Database
