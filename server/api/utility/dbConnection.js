@@ -1,20 +1,17 @@
 //Mongo DB Connection 
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+const mongoose = require('mongoose');
 
-dotenv.config();
-
-    const connection = async (DB_URL)=>{
+const connection = async (DB_URL)=>{
 
     try{
-       await mongoose.connect(DB_URL,{useNewUrlParser:true});
-       console.log("🍀 Database Connected successfully!");
+        await mongoose.connect(DB_URL,{useNewUrlParser:true});
+        console.log("🍀 Database Connected successfully!");
 
     }
-     catch(error){
+        catch(error){
         console.log("😢 Error connecting to database!!!");
         console.log(error);
     }
 }
 
-export default connection;
+module.exports = connection;
