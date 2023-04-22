@@ -42,8 +42,8 @@ app.post('/signup', (req,res) => {
     /*Input Form Data: -->
     {
         username:  "rk_25",
-        email:     "rahul25@gmail.com"
-        password:  "test123"
+        email:     "rahul25@gmail.com",
+        password:  "test123",
     } 
     */
 
