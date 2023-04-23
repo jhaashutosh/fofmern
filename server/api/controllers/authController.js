@@ -1,8 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const SignUpDetails = require("../models/SignUpDetails");
-const signup_details_model = require("../models/SignUpDetails");
 const nodemailer = require("nodemailer");
+
+//Models
+const SignUpDetails = require("../models/SignUpDetails");
+
+//Functions
+const loginValidator = require("../validation/loginValidator");
 
 const sendVerifyMail = async (name, email, user_id) => {
   try {
@@ -57,12 +59,14 @@ exports.verifyMail = async (req, res) => {
 };
 
 //Signup Route -> POST Method  --> /auth/signup
-exports.signupController = (req, res) => {
+exports.signupController = (req, loginValidator, res) => {
+
   /*Input Form Data: -->
     {
         username:  "rk_25",
         email:     "rahul25@gmail.com",
         password:  "test123",
+        confirmPassword: "test123"
     } 
     */
 
@@ -107,7 +111,7 @@ exports.loginController = async (req, res) => {
 
   //Checking if Email Exists in Database
   try {
-    let user = await signup_details_model.findOne({ email });
+    let user = await SignUpDetails.findOne({ email });
     if (!user) {
       console.log("😥 Email Not Found in Database!");
       return res
