@@ -29,7 +29,7 @@ const sendVerifyMail = async (name, email, user_id) => {
       if (err) {
         console.log(err);
       } else {
-        conso.log("email has been sent");
+        console.log("📩Email has been sent");
       }
     });
   } catch (error) {
