@@ -1,8 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const SignUpDetails = require("../models/SignUpDetails");
-const signup_details_model = require("../models/SignUpDetails");
 const nodemailer = require("nodemailer");
+
+//Models
+const SignUpDetails = require("../models/SignUpDetails");
+
+//Functions
+const {loginValidator} = require("../functions/signupValidator");
 
 const sendVerifyMail = async (name, email, user_id) => {
   try {
@@ -58,16 +60,18 @@ exports.verifyMail = async (req, res) => {
 
 //Signup Route -> POST Method  --> /auth/signup
 exports.signupController = (req, res) => {
+
   /*Input Form Data: -->
     {
         username:  "rk_25",
         email:     "rahul25@gmail.com",
         password:  "test123",
+        confirmPassword: "test123"
     } 
     */
 
-  console.log("📑 Sign Up Form Data: \n", req.body);
-  const { username, email, password } = req.body;
+  // console.log("📑 Sign Up Form Data: \n", req.body);
+  const { username, email, password} = req.body;
 
   //Saving Data to Database SignUpDetails Model
   const signup_details = new SignUpDetails({ username, email, password });
@@ -86,14 +90,12 @@ exports.signupController = (req, res) => {
     })
     .catch((err) => {
       console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
-      res
-        .status(500)
-        .json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
+      res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
     });
 };
 
-//Login Route -> POST Method  --> /auth/login
 
+//Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
   /*Input Form Data: -->
     {
@@ -107,7 +109,7 @@ exports.loginController = async (req, res) => {
 
   //Checking if Email Exists in Database
   try {
-    let user = await signup_details_model.findOne({ email });
+    let user = await SignUpDetails.findOne({ email });
     if (!user) {
       console.log("😥 Email Not Found in Database!");
       return res

@@ -1,21 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const {
-  signupController,
-  verifyMail,
-  loginController,
-} = require("../controllers/authController");
 
-router.post("/signup", signupController);
+const {signupController,verifyMail,loginController} = require("../controllers/authController");
+const {signupValidator} = require("../functions/signupValidator");
 
-// router.get("/login", (req, res) => {
-//   res.status(200);
-//   res.send("This is success");
-
-// });
+router.post("/signup", signupValidator, signupController);
 
 router.post("/login",loginController);
-
 
 router.get("/verify", verifyMail);
 
