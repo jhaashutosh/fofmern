@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const SignUpDetails = require("../models/SignUpDetails");
+const signup_details_model = require("../models/SignUpDetails");
 const nodemailer = require("nodemailer");
 
 const sendVerifyMail = async (name, email, user_id) => {
@@ -55,7 +56,7 @@ exports.verifyMail = async (req, res) => {
   }
 };
 
-//Signup Route -> POST Method
+//Signup Route -> POST Method  --> /auth/signup
 exports.signupController = (req, res) => {
   /*Input Form Data: -->
     {
@@ -74,7 +75,10 @@ exports.signupController = (req, res) => {
   signup_details
     .save()
     .then((data) => {
-      sendVerifyMail(data.username, data.email, data._id);
+
+      //Sending Verification Mail: 
+      // sendVerifyMail(data.username, data.email, data._id);
+
       console.log("✅ SignUp Details Saved to Database Successfully! \n", data);
       res.status(200).json({
         message: "✅ SignUp Details Saved to Database Successfully!!",
@@ -86,4 +90,41 @@ exports.signupController = (req, res) => {
         .status(500)
         .json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
     });
+};
+
+//Login Route -> POST Method  --> /auth/login
+
+exports.loginController = async (req, res) => {
+  /*Input Form Data: -->
+    {
+        email:"",
+        password:"",
+    }
+    */
+
+  console.log("📑 Login Form Data: \n", req.body);
+  const { email, password } = req.body;
+
+  //Checking if Email Exists in Database
+  try {
+    let user = await signup_details_model.findOne({ email });
+    if (!user) {
+      console.log("😥 Email Not Found in Database!");
+      return res
+        .status(400)
+        .json({ message: "😥 Email Not Found in Database!" });
+    }
+
+    //Checking if Password is Correct
+    if (password === user.password) {
+      console.log("✅ Login Successful!");
+      res.status(200).json({ message: "✅ Login Successful!" });
+    } else {
+      console.log("😥 Incorrect Password!");
+      res.status(400).json({ message: "😥 Incorrect Password!" });
+    }
+  } catch (err) {
+    console.log("😥 Error in Login: \n", err);
+    res.status(500).json({ message: "😥 Error in Login!" });
+  }
 };

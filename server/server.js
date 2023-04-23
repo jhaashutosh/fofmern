@@ -37,3 +37,5 @@ app.use("/auth", authRoute);
 app.get("/", (req, res) => {
   res.send("This is Home Page!");
 });
+
+
