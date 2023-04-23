@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 //Creating Schema and Model
 const schema = mongoose.Schema;
@@ -42,6 +43,13 @@ const signup_details_schema = new schema({
         default: Date.now,
     },
 
+});
+
+//Encrypting password before saving to database! using bcrypt
+signup_details_schema.pre('save', async function(next) {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
 });
 
 const signup_details_model = mongoose.model("signup_details",signup_details_schema);

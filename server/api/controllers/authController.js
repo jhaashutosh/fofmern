@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 const SignUpDetails = require("../models/SignUpDetails");
 
 //Functions
-const loginValidator = require("../validation/loginValidator");
+const {loginValidator} = require("../functions/signupValidator");
 
 const sendVerifyMail = async (name, email, user_id) => {
   try {
@@ -59,7 +59,7 @@ exports.verifyMail = async (req, res) => {
 };
 
 //Signup Route -> POST Method  --> /auth/signup
-exports.signupController = (req, loginValidator, res) => {
+exports.signupController = (req, res) => {
 
   /*Input Form Data: -->
     {
@@ -70,8 +70,8 @@ exports.signupController = (req, loginValidator, res) => {
     } 
     */
 
-  console.log("📑 Sign Up Form Data: \n", req.body);
-  const { username, email, password } = req.body;
+  // console.log("📑 Sign Up Form Data: \n", req.body);
+  const { username, email, password} = req.body;
 
   //Saving Data to Database SignUpDetails Model
   const signup_details = new SignUpDetails({ username, email, password });
@@ -90,14 +90,12 @@ exports.signupController = (req, loginValidator, res) => {
     })
     .catch((err) => {
       console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
-      res
-        .status(500)
-        .json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
+      res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
     });
 };
 
-//Login Route -> POST Method  --> /auth/login
 
+//Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
   /*Input Form Data: -->
     {
