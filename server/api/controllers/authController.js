@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //Models
 const SignUpDetails = require("../models/SignUpDetails");
@@ -105,28 +107,80 @@ exports.loginController = async (req, res) => {
     */
 
   console.log("📑 Login Form Data: \n", req.body);
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email.toLowerCase().trim();
 
-  //Checking if Email Exists in Database
-  try {
-    let user = await SignUpDetails.findOne({ email });
-    if (!user) {
-      console.log("😥 Email Not Found in Database!");
-      return res
-        .status(400)
-        .json({ message: "😥 Email Not Found in Database!" });
+  //All Errors!
+  let allErrors = [];
+
+  //Flow of Login: 
+  //0. Convert Email to Lowercase and Trim 
+  //1. Check if Email is present in Database
+  //2. If Email is present, check if Password is correct or Not
+  //3. If Password is correct, check if Email is verified or Not
+  //4. If Email is verified, then Login Successful  If Email is not verified, then send to Email Verification Page
+  //5. If Login is Successful, then redirect Create JWT Token and redirect to /home page
+
+  //Finding User in Database
+  const user = await SignUpDetails.findOne({ email });
+
+  if(user){
+    //Checking Correct Password
+    const auth = await bcrypt.compare(req.body.password, user.password);
+
+    if(auth){
+      //Checking IF Email is Verified or Not
+      if(user.isverified){
+
+        //Create JWT Token
+        try{
+          const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
+          console.log("JWT Token created Successfully!: ",token);
+
+          //Creating Cookie
+          // res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3 * (60 * 60 * 24) * 1000 });
+          // console.log("JWT Cookie created Successfully in Browser!");
+
+          return res.send({message: "JWT Cookie created Successfully in Browser!", jwtToken: token});
+        }
+
+        catch(err){
+          console.log("Error Creating JWT! Token (Login)");
+          console.log(err);
+          allErrors.push({jwtError: "Error Creating JWT! Token (Login)"});
+        }
+
+
+        //Checking if the User is Registered or not
+        if(user.isregistered){
+          allErrors.push({loginError: "User is Registered!"});
+          // res.status(200).send({redirect: '/'});
+        }
+
+        else{
+          allErrors.push({registerError: "User is not Registered!"});
+          // res.status(200).send({redirect: '/register'});
+        }
+        
+      }
+      
+      else{
+        allErrors.push({emailError: "Email is not Verified!"});
+        //Redirect to Email Verification Page => /verify
+        // res.status(200).send({redirect: '/verify'});
+      }
     }
 
-    //Checking if Password is Correct
-    if (password === user.password) {
-      console.log("✅ Login Successful!");
-      res.status(200).json({ message: "✅ Login Successful!" });
-    } else {
-      console.log("😥 Incorrect Password!");
-      res.status(400).json({ message: "😥 Incorrect Password!" });
+    else{
+      //Incorrect Password
+      allErrors.push({passwordError: "Incorrect Password!"});
     }
-  } catch (err) {
-    console.log("😥 Error in Login: \n", err);
-    res.status(500).json({ message: "😥 Error in Login!" });
   }
+
+  else{
+    //Incorrect Email
+    allErrors.push({emailError: "Incorrect Email!"});
+  }
+
+  return res.status(400).send({allErrors});
 };
