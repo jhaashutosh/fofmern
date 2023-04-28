@@ -46,17 +46,12 @@ exports.verifyMail = async (req, res) => {
   try {
     const updatedVerify = await SignUpDetails.updateOne(
       { _id: req.query.id },
-      {
-        $set: {
-          isverified: 1,
-        },
-      }
+      { $set: { isverified: 1 } }
     );
-
     console.log(updatedVerify);
-    res.send("updated verification field");
+    res.send("📩 Email Verified Successfully! (Go to Login Page)");
   } catch (err) {
-    console.log(err);
+    console.log("⚠ Error! verifying Email \n", err);
   }
 };
 
@@ -88,6 +83,7 @@ exports.signupController = (req, res) => {
         message: "✅ SignUp Details Saved to Database Successfully!!",
       });
     })
+
     .catch((err) => {
       console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
       res
@@ -120,12 +116,15 @@ exports.loginController = async (req, res) => {
   //4. If Email is verified, then Login Successful  If Email is not verified, then send to Email Verification Page
   //5. If Login is Successful, then redirect Create JWT Token and redirect to /home page
 
+  //Email and Password from Login Form
+  const { email, password } = req.body;
+
   //Finding User in Database
   const user = await SignUpDetails.findOne({ email });
 
   if (user) {
     //Checking Correct Password
-    const auth = await bcrypt.compare(req.body.password, user.password);
+    const auth = await bcrypt.compare(password, user.password);
 
     if (auth) {
       //Checking IF Email is Verified or Not
@@ -167,11 +166,17 @@ exports.loginController = async (req, res) => {
     } else {
       //Incorrect Password
       allErrors.push({ passwordError: "Incorrect Password!" });
+      allErrors.push({ passwordError: "Incorrect Email or Password!" });
     }
   } else {
     //Incorrect Email
     allErrors.push({ emailError: "Incorrect Email!" });
+    allErrors.push({ emailError: "Incorrect Email or Password!" });
   }
 
   return res.status(400).send({ allErrors });
+};
+
+exports.allDetailsController = async (req, res) => {
+  res.send("All Details Page");
 };
