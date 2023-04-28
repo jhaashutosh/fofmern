@@ -1,5 +1,17 @@
-const { l } = require("../models/userData");
+const all_details_model = require("../models/AllDetails");
 
 exports.userRegister = (req, res) => {
-  let { name, email } = req.body;
+  const {
+    username,
+    fullName,
+    imageURL,
+    instagram,
+    bio,
+    gender,
+    state,
+    city,
+    schoolDetails,
+  } = req.body;
+
+  console.log(req.body);
 };

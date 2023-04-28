@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const SignUpDetails = require("../models/SignUpDetails");
 
 //Functions
-const { loginValidator } = require("../functions/signupValidator");
+const { loginValidator } = require("../middlewares/signupValidator");
 
 const sendVerifyMail = async (name, email, user_id) => {
   try {
