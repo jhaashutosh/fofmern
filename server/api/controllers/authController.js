@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const SignUpDetails = require("../models/SignUpDetails");
 
 //Functions
-const {loginValidator} = require("../functions/signupValidator");
+const { loginValidator } = require("../functions/signupValidator");
 
 const sendVerifyMail = async (name, email, user_id) => {
   try {
@@ -62,7 +62,6 @@ exports.verifyMail = async (req, res) => {
 
 //Signup Route -> POST Method  --> /auth/signup
 exports.signupController = (req, res) => {
-
   /*Input Form Data: -->
     {
         username:  "rk_25",
@@ -73,7 +72,7 @@ exports.signupController = (req, res) => {
     */
 
   // console.log("📑 Sign Up Form Data: \n", req.body);
-  const { username, email, password} = req.body;
+  const { username, email, password } = req.body;
 
   //Saving Data to Database SignUpDetails Model
   const signup_details = new SignUpDetails({ username, email, password });
@@ -81,9 +80,8 @@ exports.signupController = (req, res) => {
   signup_details
     .save()
     .then((data) => {
-
-      //Sending Verification Mail: 
-      // sendVerifyMail(data.username, data.email, data._id);
+      // Sending Verification Mail:
+      sendVerifyMail(data.username, data.email, data._id);
 
       console.log("✅ SignUp Details Saved to Database Successfully! \n", data);
       res.status(200).json({
@@ -92,10 +90,11 @@ exports.signupController = (req, res) => {
     })
     .catch((err) => {
       console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
-      res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
+      res
+        .status(500)
+        .json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
     });
 };
-
 
 //Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
@@ -113,8 +112,8 @@ exports.loginController = async (req, res) => {
   //All Errors!
   let allErrors = [];
 
-  //Flow of Login: 
-  //0. Convert Email to Lowercase and Trim 
+  //Flow of Login:
+  //0. Convert Email to Lowercase and Trim
   //1. Check if Email is present in Database
   //2. If Email is present, check if Password is correct or Not
   //3. If Password is correct, check if Email is verified or Not
@@ -124,63 +123,55 @@ exports.loginController = async (req, res) => {
   //Finding User in Database
   const user = await SignUpDetails.findOne({ email });
 
-  if(user){
+  if (user) {
     //Checking Correct Password
     const auth = await bcrypt.compare(req.body.password, user.password);
 
-    if(auth){
+    if (auth) {
       //Checking IF Email is Verified or Not
-      if(user.isverified){
-
+      if (user.isverified) {
         //Create JWT Token
-        try{
-          const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
-          console.log("JWT Token created Successfully!: ",token);
+        try {
+          const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN,
+          });
+          console.log("JWT Token created Successfully!: ", token);
 
           //Creating Cookie
           // res.cookie("jwt", token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3 * (60 * 60 * 24) * 1000 });
           // console.log("JWT Cookie created Successfully in Browser!");
 
-          return res.send({message: "JWT Cookie created Successfully in Browser!", jwtToken: token});
-        }
-
-        catch(err){
+          return res.send({
+            message: "JWT Cookie created Successfully in Browser!",
+            jwtToken: token,
+          });
+        } catch (err) {
           console.log("Error Creating JWT! Token (Login)");
           console.log(err);
-          allErrors.push({jwtError: "Error Creating JWT! Token (Login)"});
+          allErrors.push({ jwtError: "Error Creating JWT! Token (Login)" });
         }
-
 
         //Checking if the User is Registered or not
-        if(user.isregistered){
-          allErrors.push({loginError: "User is Registered!"});
+        if (user.isregistered) {
+          allErrors.push({ loginError: "User is Registered!" });
           // res.status(200).send({redirect: '/'});
-        }
-
-        else{
-          allErrors.push({registerError: "User is not Registered!"});
+        } else {
+          allErrors.push({ registerError: "User is not Registered!" });
           // res.status(200).send({redirect: '/register'});
         }
-        
-      }
-      
-      else{
-        allErrors.push({emailError: "Email is not Verified!"});
+      } else {
+        allErrors.push({ emailError: "Email is not Verified!" });
         //Redirect to Email Verification Page => /verify
         // res.status(200).send({redirect: '/verify'});
       }
-    }
-
-    else{
+    } else {
       //Incorrect Password
-      allErrors.push({passwordError: "Incorrect Password!"});
+      allErrors.push({ passwordError: "Incorrect Password!" });
     }
-  }
-
-  else{
+  } else {
     //Incorrect Email
-    allErrors.push({emailError: "Incorrect Email!"});
+    allErrors.push({ emailError: "Incorrect Email!" });
   }
 
-  return res.status(400).send({allErrors});
+  return res.status(400).send({ allErrors });
 };

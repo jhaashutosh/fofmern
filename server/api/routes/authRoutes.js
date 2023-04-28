@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { authVerifyMiddleware } = require("../middlewares/authVerifyMiddleware");
 
 const {
   signupController,
@@ -12,11 +11,6 @@ const { signupValidator } = require("../functions/signupValidator");
 router.post("/signup", signupValidator, signupController);
 
 router.post("/login", loginController);
-
-//testing the middleware
-router.get("/middleware", authVerifyMiddleware, () => {
-  res.send("middleware testing");
-});
 
 router.get("/verify", verifyMail);
 

@@ -4,6 +4,7 @@ const app = express();
 const morgan = require("morgan");
 const dotenv = require("dotenv");
 const authRoute = require("./api/routes/authRoutes");
+const userRoute = require("./api/routes/userRoutes");
 dotenv.config();
 
 //Importing Necessary Files
@@ -33,9 +34,10 @@ app.listen(PORT, () =>
 //authRoute
 app.use("/auth", authRoute);
 
+//userRoute
+app.use("/user", userRoute);
+
 //Home Route
 app.get("/", (req, res) => {
   res.send("This is Home Page!");
 });
-
-
