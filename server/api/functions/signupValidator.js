@@ -4,14 +4,29 @@ const validator = require('validator');
 
 //Login Validator Function
 exports.signupValidator = async (req, res, next) => {
-    console.log("📑 Signup Form Details: \n", req.body);
 
+    /*Input Form Data: -->
+    {
+        username:  "rk_25",
+        email:     "rahul25@gmail.com",
+        password:  "test123",
+        confirmPassword: "test123"
+    } 
+    */
+   
+    console.log("📑 Signup Form Details: \n", req.body);
     let { username, email, password, confirmPassword } = req.body;
+
+    //Handling Undefined Values: 
+    if (username === undefined) username = "";
+    if (email === undefined) email = "";
+    if (password === undefined) password = "";
+    if (confirmPassword === undefined) confirmPassword = "";
 
     //Trimming Input Values:
     username = username.trim();
-    email = email.trim();
-
+    email = email.trim().toLowerCase();
+    
     let allErrors = [];
 
     //Username Validation =========================================>

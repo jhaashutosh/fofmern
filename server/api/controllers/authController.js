@@ -5,9 +5,6 @@ const jwt = require("jsonwebtoken");
 //Models
 const SignUpDetails = require("../models/SignUpDetails");
 
-//Functions
-const {loginValidator} = require("../functions/signupValidator");
-
 const sendVerifyMail = async (name, email, user_id) => {
   try {
     const mailTransporter = nodemailer.createTransport({
@@ -46,33 +43,18 @@ exports.verifyMail = async (req, res) => {
   try {
     const updatedVerify = await SignUpDetails.updateOne(
       { _id: req.query.id },
-      {
-        $set: {
-          isverified: 1,
-        },
-      }
+      {$set: {isverified: 1}}
     );
-
     console.log(updatedVerify);
-    res.send("updated verification field");
+    res.send("📩 Email Verified Successfully! (Go to Login Page)");
   } catch (err) {
-    console.log(err);
+    console.log("⚠ Error! verifying Email \n", err);
   }
 };
 
 //Signup Route -> POST Method  --> /auth/signup
 exports.signupController = (req, res) => {
 
-  /*Input Form Data: -->
-    {
-        username:  "rk_25",
-        email:     "rahul25@gmail.com",
-        password:  "test123",
-        confirmPassword: "test123"
-    } 
-    */
-
-  // console.log("📑 Sign Up Form Data: \n", req.body);
   const { username, email, password} = req.body;
 
   //Saving Data to Database SignUpDetails Model
@@ -82,36 +64,25 @@ exports.signupController = (req, res) => {
     .save()
     .then((data) => {
 
-      //Sending Verification Mail: 
-      // sendVerifyMail(data.username, data.email, data._id);
+      // Sending Verification Mail: 
+      sendVerifyMail(data.username, data.email, data._id);
 
       console.log("✅ SignUp Details Saved to Database Successfully! \n", data);
-      res.status(200).json({
-        message: "✅ SignUp Details Saved to Database Successfully!!",
-      });
+      res.status(200).json({ message: "✅ SignUp Details Saved to Database Successfully!!",});
+
     })
+
     .catch((err) => {
+
       console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
       res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
+
     });
 };
 
 
 //Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
-  /*Input Form Data: -->
-    {
-        email:"",
-        password:"",
-    }
-    */
-
-  console.log("📑 Login Form Data: \n", req.body);
-  let { email, password } = req.body;
-  email = email.toLowerCase().trim();
-
-  //All Errors!
-  let allErrors = [];
 
   //Flow of Login: 
   //0. Convert Email to Lowercase and Trim 
@@ -121,12 +92,18 @@ exports.loginController = async (req, res) => {
   //4. If Email is verified, then Login Successful  If Email is not verified, then send to Email Verification Page
   //5. If Login is Successful, then redirect Create JWT Token and redirect to /home page
 
+  //Email and Password from Login Form
+  const {email, password} = req.body;
+
   //Finding User in Database
   const user = await SignUpDetails.findOne({ email });
 
+  //All Errors!
+  let allErrors = [];
+
   if(user){
     //Checking Correct Password
-    const auth = await bcrypt.compare(req.body.password, user.password);
+    const auth = await bcrypt.compare(password, user.password);
 
     if(auth){
       //Checking IF Email is Verified or Not
@@ -173,13 +150,13 @@ exports.loginController = async (req, res) => {
 
     else{
       //Incorrect Password
-      allErrors.push({passwordError: "Incorrect Password!"});
+      allErrors.push({passwordError: "Incorrect Email or Password!"});
     }
   }
 
   else{
     //Incorrect Email
-    allErrors.push({emailError: "Incorrect Email!"});
+    allErrors.push({emailError: "Incorrect Email or Password!"});
   }
 
   return res.status(400).send({allErrors});
