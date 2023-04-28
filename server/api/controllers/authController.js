@@ -161,3 +161,9 @@ exports.loginController = async (req, res) => {
 
   return res.status(400).send({allErrors});
 };
+
+
+
+exports.allDetailsController = async (req, res) => {
+  res.send("All Details Page");
+}
