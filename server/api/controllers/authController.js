@@ -214,7 +214,7 @@ exports.allDetailsController = async (req, res) => {
     state,
     city,
     schoolDetails,
-  } = res.data;
+  } = req.data;
 
   //Saving All Details to Database
   const all_details = new AllDetails({
