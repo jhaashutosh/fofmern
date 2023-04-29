@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 //Models
 const SignUpDetails = require("../models/SignUpDetails");
+const AllDetails = require("../models/AllDetails");
 
 //Functions
 const { loginValidator } = require("../middlewares/signupValidator");
@@ -66,10 +67,10 @@ exports.signupController = (req, res) => {
     } 
     */
 
-  // console.log("📑 Sign Up Form Data: \n", req.body);
-  const { username, email, password } = req.body;
+  console.log("📑 Sign Up Form Data (After Validations): \n", res.data);
+  const { username, email, password } = res.data;
 
-  //Saving Data to Database SignUpDetails Model
+  //Saving Data to Database SignUpDetails
   const signup_details = new SignUpDetails({ username, email, password });
 
   signup_details
@@ -94,11 +95,9 @@ exports.signupController = (req, res) => {
 
 //Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
-  console.log("📑 Login Form Data: \n", req.body);
-
   //Email and Password from Login Form
-  const { email, password } = req.body;
-  email = email.toLowerCase().trim();
+  console.log("📑 Login Form Data: \n", res.data);
+  const { email, password } = res.data;
 
   //All Errors!
   let allErrors = [];
@@ -168,5 +167,44 @@ exports.loginController = async (req, res) => {
 };
 
 exports.allDetailsController = async (req, res) => {
-  res.send("All Details Page");
+  console.log("📑 All Details Page Data (After Validation): \n", res.data);
+
+  const {
+    fullName,
+    imageURL,
+    instagram,
+    bio,
+    gender,
+    state,
+    city,
+    schoolDetails,
+  } = res.data;
+
+  //Saving All Details to Database
+  const all_details = new AllDetails({
+    fullName,
+    imageURL,
+    instagram,
+    bio,
+    gender,
+    state,
+    city,
+    schoolDetails,
+  });
+
+  all_details
+    .save()
+    .then((data) => {
+      console.log("✅ All Details Saved to Database Successfully! \n", data);
+      res
+        .status(200)
+        .json({ message: "✅ All Details Saved to Database Successfully!!" });
+    })
+
+    .catch((err) => {
+      console.log("😥 Error in Saving All Details to Database: \n", err);
+      res
+        .status(500)
+        .json({ message: "😥 Error in Saving All Details to Database!" });
+    });
 };
