@@ -8,7 +8,7 @@ router.post(
   "/register",
   authVerifyMiddleware,
   allDetailsValidator,
-  userRegister
+  // userRegister
 );
 
 module.exports = router;

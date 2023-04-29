@@ -199,7 +199,7 @@ exports.loginController = async (req, res) => {
 };
 
 exports.allDetailsController = async (req, res) => {
-  console.log("📑 All Details Page Data (After Validation): \n", res.data);
+  console.log("📑 All Details Page Data (After Validation): \n", req.data);
 
   //Fetch From Database or JWT Token
   //Temporary -> Dummy Username

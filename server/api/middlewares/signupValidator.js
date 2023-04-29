@@ -109,7 +109,7 @@ exports.signupValidator = async (req, res, next) => {
   }
   //If no error found, then call next() function
   else {
-    res.data = { username, email, password };
+    req.data = { username, email, password };
     next();
   }
 };
