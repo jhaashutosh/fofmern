@@ -42,7 +42,7 @@ exports.loginValidator = async (req, res, next) => {
   }
   //If no error found, then call next() function
   else {
-    res.data = { email, password };
+    req.data = { email, password };
     next();
   }
 };

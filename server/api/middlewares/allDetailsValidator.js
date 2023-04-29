@@ -155,7 +155,7 @@ exports.allDetailsValidator = async (req, res, next) => {
   }
   //If no error found, then call next() function
   else {
-    res.data = {
+    req.data = {
       fullName,
       imageURL,
       instagram,

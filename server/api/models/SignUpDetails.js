@@ -6,37 +6,44 @@ const schema = mongoose.Schema;
 
 const signup_details_schema = new schema({
   username: {
-    type: "String",
+    type: String,
     lowercase: true,
     required: [true, "Enter a username"],
     unique: true,
   },
 
   email: {
-    type: "String",
+    type: String,
     lowercase: true,
     required: [true, "Enter an email"],
     unique: true,
   },
 
   password: {
-    type: "String",
+    type: String,
     required: [true, "Enter password"],
     minlength: [2, "Password must be at least 2 characters"],
   },
 
   isverified: {
-    type: "Boolean",
+    type: Boolean,
     default: false,
   },
 
   isregistered: {
-    type: "Boolean",
+    type: Boolean,
     default: false,
   },
 
+  numberOfTries: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 3,
+  },
+
   createdat: {
-    type: "Date",
+    type: Date,
     default: Date.now,
   },
 });

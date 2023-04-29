@@ -6,6 +6,7 @@ const {
   verifyMail,
   loginController,
   allDetailsController,
+  resendVerifyMail,
 } = require("../controllers/authController");
 
 const { signupValidator } = require("../middlewares/signupValidator");
@@ -18,6 +19,8 @@ router.post("/login", loginValidator, loginController);
 
 router.post("/allDetails", allDetailsValidator, allDetailsController);
 
-router.get("/verify", verifyMail);
+router.get("/verify/:id", verifyMail);
+
+router.post("/resendVerify", resendVerifyMail);
 
 module.exports = router;

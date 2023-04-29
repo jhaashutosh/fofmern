@@ -46,6 +46,6 @@ const all_details_schema = new schema({
   },
 });
 
-const all_details_model = mongoose.model("all_details", all_details_schema);
+const userDetails = mongoose.model("userDetails", all_details_schema);
 
-module.exports = all_details_model;
+module.exports = userDetails;

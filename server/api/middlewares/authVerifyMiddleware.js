@@ -5,7 +5,7 @@ exports.authVerifyMiddleware = (req, res, next) => {
   if (token) {
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
-      req.body = { data: payload };
+      req.user = { id: payload };
       next();
     } catch (err) {
       console.log(err);

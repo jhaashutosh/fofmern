@@ -1,4 +1,3 @@
-const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -8,47 +7,74 @@ const AllDetails = require("../models/AllDetails");
 
 //Functions
 const { loginValidator } = require("../middlewares/signupValidator");
+const { createPasscode } = require("../utility/jwtPasscode");
+const { sendMail } = require("../utility/sendMail");
 
 const sendVerifyMail = async (name, email, user_id) => {
+  const userToken = createPasscode("50m", { user_id: user_id });
+
+  const userDetails = await SignUpDetails.findById(user_id);
+  if (!userDetails) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const updatedNumberOfTries = userDetails.numberOfTries + 1;
+
+  const updatedVerify = await SignUpDetails.updateOne(
+    { _id: user_id },
+    { $set: { numberOfTries: updatedNumberOfTries } }
+  );
+
+  let subject = "Verification mail from FOF";
+  let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${
+    process.env.VERIFY_URL + userToken
+  }>VERIFY</a></p>`;
+
+  return (confirmation = sendMail(email, subject, HTML_STRING));
+};
+
+exports.resendVerifyMail = async (req, res) => {
+  const { username, email, password } = req.body;
   try {
-    const mailTransporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      secure: false,
-      requireTLS: true,
-      auth: {
-        user: process.env.MAIL_ID,
-        pass: process.env.MAIL_PASS,
-      },
+    const user = await SignUpDetails.findOne({ email });
+    if (!user || user == undefined) {
+      res.status(400).json({
+        message: "user not found",
+      });
+    }
+    const confirmation = await sendVerifyMail(
+      user.username,
+      user.email,
+      user._id
+    );
+    if (confirmation === false) {
+      res.status(500).json({
+        error: "mail server not working",
+      });
+    }
+    res.status(200).json({
+      message: "✅Mail has been sent!",
     });
-
-    const mailOptions = {
-      from: process.env.MAIL_ID,
-      to: email,
-      subject: "Verification mail from FOF",
-      html: `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${
-        process.env.VERIFY_URL + user_id
-      }>VERIFY</a></p>`,
-    };
-
-    mailTransporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("📩Email has been sent");
-      }
-    });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
   }
 };
 
 exports.verifyMail = async (req, res) => {
+  const userToken = req.params.id;
   try {
+    const userId = jwt.verify(userToken, process.env.JWT_SECRET).payload[0]
+      .user_id;
+
     const updatedVerify = await SignUpDetails.updateOne(
-      { _id: req.query.id },
-      { $set: { isverified: 1 } }
+      { _id: userId },
+      { $set: { isverified: true } }
     );
+
+    return res
+      .status(200)
+      .json({ message: "User verification status updated successfully" });
+
     console.log(updatedVerify);
     res.send("📩 Email Verified Successfully! (Go to Login Page)");
   } catch (err) {
@@ -67,11 +93,17 @@ exports.signupController = (req, res) => {
     } 
     */
 
-  console.log("📑 Sign Up Form Data (After Validations): \n", res.data);
-  const { username, email, password } = res.data;
+  // console.log("📑 Sign Up Form Data: \n", req.body);
+  const { username, email, password } = req.body;
+  const numberOfTries = 1;
 
-  //Saving Data to Database SignUpDetails
-  const signup_details = new SignUpDetails({ username, email, password });
+  //Saving Data to Database SignUpDetails Model
+  const signup_details = new SignUpDetails({
+    username,
+    email,
+    password,
+    numberOfTries,
+  });
 
   signup_details
     .save()
@@ -96,8 +128,8 @@ exports.signupController = (req, res) => {
 //Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
   //Email and Password from Login Form
-  console.log("📑 Login Form Data: \n", res.data);
-  const { email, password } = res.data;
+  console.log("📑 Login Form Data: \n", req.data);
+  const { email, password } = req.data;
 
   //All Errors!
   let allErrors = [];
@@ -167,12 +199,11 @@ exports.loginController = async (req, res) => {
 };
 
 exports.allDetailsController = async (req, res) => {
-
   console.log("📑 All Details Page Data (After Validation): \n", res.data);
-  
+
   //Fetch From Database or JWT Token
   //Temporary -> Dummy Username
-  let username = "rk_25"
+  let username = "rk_25";
 
   const {
     fullName,
