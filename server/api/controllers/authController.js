@@ -167,7 +167,12 @@ exports.loginController = async (req, res) => {
 };
 
 exports.allDetailsController = async (req, res) => {
+
   console.log("📑 All Details Page Data (After Validation): \n", res.data);
+  
+  //Fetch From Database or JWT Token
+  //Temporary -> Dummy Username
+  let username = "rk_25"
 
   const {
     fullName,
@@ -182,6 +187,7 @@ exports.allDetailsController = async (req, res) => {
 
   //Saving All Details to Database
   const all_details = new AllDetails({
+    username,
     fullName,
     imageURL,
     instagram,
