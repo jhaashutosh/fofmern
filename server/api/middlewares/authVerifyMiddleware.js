@@ -2,10 +2,11 @@ const jwt = require("jsonwebtoken");
 
 exports.authVerifyMiddleware = (req, res, next) => {
   let token = req.header("Authorization").split(" ")[1];
+  console.log("🔑 Token: ", token);
   if (token) {
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = { id: payload };
+      req.user = payload;
       next();
     } catch (err) {
       console.log(err);
