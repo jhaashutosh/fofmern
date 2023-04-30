@@ -6,7 +6,7 @@ exports.loginValidator = async (req, res, next) => {
         email:"",
         password:"",
     }
-    */
+  */
 
   console.log("📑 Login Form Data: \n", req.body);
   let { email, password } = req.body;

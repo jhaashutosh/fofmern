@@ -12,6 +12,7 @@ const { sendMail } = require("../utility/sendMail");
 
 const sendVerifyMail = async (name, email, user_id) => {
   const userToken = createPasscode("50m", { user_id: user_id });
+  console.log("🔑Email Verification Token: ", userToken);
 
   const userDetails = await SignUpDetails.findById(user_id);
   if (!userDetails) {
@@ -154,9 +155,13 @@ exports.loginController = async (req, res) => {
       if (user.isverified) {
         //Create JWT Token
         try {
-          const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES_IN,
-          });
+          const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            {
+              expiresIn: process.env.JWT_EXPIRES_IN,
+            }
+          );
           console.log("JWT Token created Successfully!: ", token);
 
           //Creating Cookie
@@ -198,50 +203,7 @@ exports.loginController = async (req, res) => {
   return res.status(400).send({ allErrors });
 };
 
-exports.allDetailsController = async (req, res) => {
-  console.log("📑 All Details Page Data (After Validation): \n", req.data);
-
-  //Fetch From Database or JWT Token
-  //Temporary -> Dummy Username
-  let username = "rk_25";
-
-  const {
-    fullName,
-    imageURL,
-    instagram,
-    bio,
-    gender,
-    state,
-    city,
-    schoolDetails,
-  } = req.data;
-
-  //Saving All Details to Database
-  const all_details = new AllDetails({
-    username,
-    fullName,
-    imageURL,
-    instagram,
-    bio,
-    gender,
-    state,
-    city,
-    schoolDetails,
-  });
-
-  all_details
-    .save()
-    .then((data) => {
-      console.log("✅ All Details Saved to Database Successfully! \n", data);
-      res
-        .status(200)
-        .json({ message: "✅ All Details Saved to Database Successfully!!" });
-    })
-
-    .catch((err) => {
-      console.log("😥 Error in Saving All Details to Database: \n", err);
-      res
-        .status(500)
-        .json({ message: "😥 Error in Saving All Details to Database!" });
-    });
+//Logout Route -> GET Method  --> /auth/logout
+exports.logoutController = (req, res) => {
+  res.send("Logout Page!");
 };
