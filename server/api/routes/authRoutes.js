@@ -7,6 +7,8 @@ const {
   loginController,
   resendVerifyMail,
   logoutController,
+  forgotPasswordController,
+  resetPasswordController,
 } = require("../controllers/authController");
 
 const { signupValidator } = require("../middlewares/signupValidator");
@@ -21,5 +23,9 @@ router.get("/verify/:id", verifyMail);
 router.post("/resendVerify", resendVerifyMail);
 
 router.get("/logout", logoutController);
+
+router.post("/forgotPassword", forgotPasswordController);
+
+router.post("/resetPassword/:token", resetPasswordController);
 
 module.exports = router;
