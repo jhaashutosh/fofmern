@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 //Models
 const SignUpDetails = require("../models/SignUpDetails");
@@ -8,7 +9,7 @@ const AllDetails = require("../models/AllDetails");
 //Functions
 const { loginValidator } = require("../middlewares/signupValidator");
 const { createPasscode } = require("../utility/jwtPasscode");
-const { sendMail } = require("../utility/sendMail");
+const { sendMail, sendMail2 } = require("../utility/sendMail");
 
 const sendVerifyMail = async (name, email, user_id) => {
   const userToken = createPasscode("50m", { user_id: user_id });
@@ -206,4 +207,152 @@ exports.loginController = async (req, res) => {
 //Logout Route -> GET Method  --> /auth/logout
 exports.logoutController = (req, res) => {
   res.send("Logout Page!");
+};
+
+//Forgot Password Route -> POST Method  --> /auth/forgotpassword
+exports.forgotPasswordController = async (req, res) => {
+  /*Input Form Data: -->
+    {
+        "email" : "connectrahul25@gmail.com",
+    }
+  */
+
+  let email = req.body.email;
+  console.log("📑 Forgot Password Form Data: \n", email);
+
+  let allErrors = [];
+
+  //Handling False Values: Null, Undefined, Empty String, 0, -1, False, NaN
+  if (!email) email = "";
+  if (email === "") {
+    allErrors.push({ emailError: "Email is Required!" });
+  } else if (!validator.isEmail(email)) {
+    allErrors.push({ emailError: "Invalid Email!" });
+  } else {
+    //Checking if Email is present in Database. -> SignUpDetails Model
+    const user = await SignUpDetails.findOne({ email });
+
+    if (user) {
+      //Sending Reset Password Mail-------------------->
+
+      //Creating Token
+      const userToken = jwt.sign(
+        { id: user._id, email: user.email, username: user.username },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        }
+      );
+
+      console.log("🔑Forgot Password Token: ", userToken);
+
+      let subject = "FOF - Reset Password! ";
+      let HTML_STRING = `<p> Hello ${
+        user.username
+      } !,<br>This is your reset password mail!, Click here to reset your password: <br> <a href=${
+        process.env.FORGOT_PASS_URL + userToken
+      }>VERIFY</a></p>`;
+
+      const confirmation = await sendMail2(email, subject, HTML_STRING);
+      console.log("📧 Mail Sent: ", confirmation);
+      if (!confirmation) {
+        allErrors.push({ emailError: "Error Sending Reset Password Mail!" });
+      }
+    } else {
+      allErrors.push({ emailError: "Email is not Registered!" });
+    }
+  }
+
+  //Sending Response
+  if (allErrors.length > 0) {
+    return res.status(400).send({ allErrors });
+  } else {
+    return res
+      .status(200)
+      .send({ message: "Reset Password Mail Sent Successfully!" });
+  }
+};
+
+//Reset Password Route -> POST Method  --> /auth/resetpassword
+exports.resetPasswordController = async (req, res) => {
+  /*Input Form Data: -->
+    {
+        "password" : "pass123",
+        "confirmPassword" : "pass123"
+    }
+  */
+
+  console.log("📑 Reset Password Form Data: \n", req.body);
+  const { password, confirmPassword } = req.body;
+
+  //Validating Password!
+  let allErrors = [];
+  if (!password) allErrors.push({ passwordError: "Password is Required!" });
+  if (!confirmPassword)
+    allErrors.push({ confirmPasswordError: "Confirm Password is Required!" });
+  else if (password !== confirmPassword)
+    allErrors.push({
+      confirmPasswordError: "Password and Confirm Password should be same!",
+    });
+  else if (password.length < 3)
+    allErrors.push({
+      passwordError: "Password should be atleast 3 characters long!",
+    });
+  else if (password.length > 100)
+    allErrors.push({
+      passwordError: "Password should be atmost 100 characters long!",
+    });
+  else {
+    //Getting Token from URL
+    const token = req.params.token;
+    console.log("🔑 Reset Password Token: ", token);
+
+    //Verifying Token
+    let decodedToken;
+    try {
+      //Decoding Token
+      decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
+      console.log("🔑 Decoded Reset Password Token: ", decodedToken);
+    } catch (err) {
+      console.log("Error Decoding Reset Password Token!", err);
+      allErrors.push({ tokenError: "Error Decoding Reset Password Token!" });
+    }
+
+    //Checking if Token is Expired or Not
+    if (decodedToken) {
+      if (decodedToken.expiredAt < Date.now()) {
+        allErrors.push({ tokenError: "Reset Password Token Expired!" });
+      } else {
+        //Creating Hashed Password
+        const hashPassword = await bcrypt.hash(password, 12);
+
+        console.log(
+          "🔴 Values: ",
+          decodedToken.email,
+          decodedToken.username,
+          hashPassword
+        );
+
+        //FindOneAndUpdate -> SignUpDetails Model
+        try {
+          const updatedUser = await SignUpDetails.findOneAndUpdate(
+            { email: decodedToken.email },
+            { password: hashPassword },
+            { new: true } // return the updated user
+          );
+          console.log("User password updated successfully!", updatedUser);
+        } catch (err) {
+          console.log("Error Updating User Password!", err);
+          allErrors.push({ passwordError: "Error Updating User Password!" });
+        }
+      }
+    }
+  }
+
+  //Sending Response
+  if (allErrors.length > 0) {
+    return res.status(400).send({ allErrors: allErrors });
+  } else {
+    return res.status(200).send({ message: "Password Updated Successfully!" });
+  }
 };
