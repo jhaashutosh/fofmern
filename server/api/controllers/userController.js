@@ -92,12 +92,9 @@ exports.searchFriendsController = async (req, res) => {
     return res.status(400).json({ classNameError: "Invalid Class Name!" });
   }
 
-  const classNameString = "schoolDetails." + className;
-  console.log("👨‍🎓 classNameString: ", classNameString);
-
   //Searching Friends in Database
   const friends = await allDetails.find({
-    "schoolDetails.XII" : "2018#2019#RPVV#abc",
+    [`schoolDetails.${className}`]: hashString,
   });
 
   console.log("👫 Friends Found: \n", friends);
