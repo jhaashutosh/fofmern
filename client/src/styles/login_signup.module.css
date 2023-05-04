@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;0,900;1,100;1,400;1,500;1,600;1,700;1,900&display=swap');
+
+*{  
+    /* font-family: 'Poppins', sans-serif; */
+    --lightcolor: #f5b97d7e;
+    --darkcolor: #f19131;
+    --orange: #f08821;
+}
+
+.login_signup_page{
+
+    font-family: poppins;
+    background-color: var(--lightcolor);
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    padding: 0;
+    margin: 0;
+}
+
+.heading{
+    position: relative;
+    font-size: 30px;
+}
+
+.heading::after{
+    content: " ";
+    width: 30px;
+    height: 5px;
+    background-color: var(--darkcolor);
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+}
+
+.main{
+    margin: 100px 0px;
+    height: 530px;
+    width: 700px;
+    display: flex;
+    background-color: white;
+    box-shadow: 5px 5px 30px 3px rgba(0, 0, 0, 0.47);
+}
+
+
+.login_signup{
+    height: 530px;
+    width: 350px;
+    padding: 20px 20px;
+}
+
+.signup{
+    height: 530px;
+    width: 350px;
+}
+
+.loginimagediv{
+    height: 530px;
+    width: 350px;
+}
+
+
+.flipbutton{
+    cursor: pointer;
+    background-color: transparent;
+    border-style: none;
+    font-size: 16px;
+    font-weight: 530;
+    text-decoration: underline;
+    color: var(--darkcolor);
+}
+
+.html_form p{
+    font-family: 'Poppins', sans-serif;
+}
+
+.html_form i{
+    color: var(--darkcolor);
+}
+
+.html_form input{
+    font-family: 'Poppins', sans-serif;
+    margin: 7px;
+    border-style: none;
+    font-size: 15px;
+}
+
+.html_form input:focus{
+    outline:none;
+}
+
+.submit{
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    background-color: var(--darkcolor);
+    color: white;
+    width: 100%;
+    padding: 10px 25px;
+    margin: 30px 0px;
+    border-radius: 5px;
+}
+
+.submit:hover{
+    background-color: var(--orange);
+}
+
+.html_form label{
+    font-size: 15px;
+}
+
+.html_form a{  
+
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+.inputfield{
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.418);
+    display: flex;
+    place-items: center;
+    margin: 10px 0px;
+}
+
+.inputarea{
+    width: 100%;
+}
+
+.imagediv{
+    backface-visibility: hidden;
+    position: absolute;
+    height: 530px;
+    width: 350px;
+}
+
+
+.imagediv img{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.quote{
+    position: absolute;
+    display: block;
+    width: 100%;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 25px;
+    font-weight: 700;
+    padding: 10px;
+}
+
+
+.error_message{
+    color: red;
+    font-size: 13px;
+    margin: 1px 0px;
+}
