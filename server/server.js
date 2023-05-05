@@ -23,6 +23,17 @@ app.use(morgan("dev"));
 const PORT = process.env.PORT;
 const DB_URI = process.env.DB_URI;
 
+//CORS -> Cross Origin Resource Sharing
+const cors = require("cors");
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000',
+}));
+
+//Cookie Parser - For JWT Tokens
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 //Connection to MongoDB Database
 connection(DB_URI);
 
