@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import style from '../styles/login_signup.module.css'
+import style from '../styles/loginSignup.module.css'
 
 const Signup = () => {
 

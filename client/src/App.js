@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Error404 from "./pages/Error404";
 import AllDetails from "./pages/AllDetails";
 import Logout from "./pages/Logout";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/allDetails" element={<AllDetails />} />
+          <Route path="/verifyemail" element={<VerifyEmail/>} />
           <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
