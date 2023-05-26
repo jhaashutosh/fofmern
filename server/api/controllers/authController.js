@@ -8,7 +8,7 @@ const AllDetails = require("../models/AllDetails");
 
 //Functions
 const { createPasscode } = require("../utility/jwtPasscode");
-const { sendMail, sendMail2 } = require("../utility/sendMail");
+const { sendMail } = require("../utility/sendMail");
 
 const sendVerifyMail = async (name, email, user_id) => {
 	const userToken = createPasscode("50m", { user_id: user_id });
@@ -27,11 +27,12 @@ const sendVerifyMail = async (name, email, user_id) => {
 	);
 
 	let subject = "Verification mail from FOF";
-	let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${process.env.VERIFY_URL + userToken
-		}>VERIFY</a></p>`;
+	let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${process.env.VERIFY_URL + userToken}>VERIFY</a></p>`;
 
 	return (confirmation = sendMail(email, subject, HTML_STRING));
 };
+
+//What is this Use? --------------------->
 
 exports.resendVerifyMail = async (req, res) => {
 	const { username, email, password } = req.body;
@@ -71,14 +72,11 @@ exports.verifyMail = async (req, res) => {
 			{ $set: { isverified: true } }
 		);
 
-		return res
-			.status(200)
-			.json({ message: "User verification status updated successfully" });
+		return res.status(200).send("📩 Email Verified Successfully! (Go to Login Page)");
 
-		console.log(updatedVerify);
-		res.send("📩 Email Verified Successfully! (Go to Login Page)");
 	} catch (err) {
 		console.log("⚠ Error! verifying Email \n", err);
+		return res.status(500).send("⚠ Error! verifying Email");
 	}
 };
 
@@ -111,6 +109,33 @@ exports.signupController = (req, res) => {
 			console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
 			res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
 		});
+};
+
+//SendVerificationMail Route -> GET Method  --> /auth/sendVerificationMail/:id
+exports.sendVerificationMailController = async (req, res) => {
+	const id = req.params.id;
+	console.log("🔑 User ID: ", id);
+
+	let user;
+	try {
+		user = await SignUpDetails.findById(id);
+	} catch (err) {
+		return res.status(200).json({ message: "⚠ Error! Incorrect user ID!" });
+	}
+
+	if (user.isverified) {
+		return res.status(200).json({ message: "✅ Email already Verified! (Go to Login Page)" });
+	}
+	else {
+		//Sending Verification Mail
+		const confirmation = await sendVerifyMail(user.username, user.email, user._id);
+		if (confirmation === false) {
+			return res.status(200).json({ message: "⚠ Error! Mail server not working!" });
+		}
+		else {
+			return res.status(200).json({ message: "🥳📩 Mail Sent Successfully!" });
+		}
+	}
 };
 
 //Login Route -> POST Method  --> /auth/login
@@ -159,7 +184,7 @@ exports.loginController = async (req, res) => {
 			}
 
 			else {
-				return res.status(200).send({ loginMessage: "Email is not Verified!", redirect: '/verifyEmail' });
+				return res.status(200).send({ loginMessage: "Email is not Verified!", redirect: `/sendVerificationMail/${user._id}` });
 			}
 		}
 

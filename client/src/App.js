@@ -22,7 +22,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/allDetails" element={<AllDetails />} />
-          <Route path="/verifyemail" element={<VerifyEmail/>} />
+          <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
