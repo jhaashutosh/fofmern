@@ -50,5 +50,5 @@ app.use("/user", userRoute);
 
 //Home Route
 app.get("/", (req, res) => {
-  res.send("This is Home Page!");
+  res.send("Server is Running on PORT: " + PORT);
 });

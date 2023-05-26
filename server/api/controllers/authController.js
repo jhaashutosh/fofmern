@@ -32,8 +32,7 @@ const sendVerifyMail = async (name, email, user_id) => {
 	return (confirmation = sendMail(email, subject, HTML_STRING));
 };
 
-//What is this Use? --------------------->
-
+//What is the use of this Function resendVerifyMail? --------------------->
 exports.resendVerifyMail = async (req, res) => {
 	const { username, email, password } = req.body;
 	try {
