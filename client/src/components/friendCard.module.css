@@ -1,0 +1,122 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #EFF4F8;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-wrap: wrap;
+}
+
+
+.profile_card {
+    height: 310px;
+    width: 230px;
+    background-color: white;
+
+    margin: 6px 12px;
+    padding: 20px 5px;
+
+    text-align: center;
+
+    box-shadow: 1px 0px 5px 0px rgba(204, 204, 204, 0.5);
+}
+
+.profile_img {
+    height: 130px;
+    width: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.name {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.user_name {
+    font-size: 13px;
+    color: #2c5ae4;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.instagram {
+    font-size: 14px;
+    color: #5A5A5A;
+    margin-top: 7px;
+}
+
+.instagram i {
+    font-size: 20px;
+}
+
+.instagram:hover {
+    color: #fb4a6e;
+    cursor: pointer;
+}
+
+.button_div {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.button_div .button {
+    border: none;
+    padding: 10px 15px;
+
+    margin: 0px 5px;
+    border-radius: 30px;
+
+    font-size: 12px;
+}
+
+.button_div .view_profile {
+    background-color: #507BFC;
+    color: white;
+}
+
+.button_div .view_profile {
+    box-shadow: 0px 8px 20px -2px #507BFC;
+    background-color: #2855de;
+    cursor: pointer;
+
+    transition: 0.1s linear;
+}
+
+.button_div .view_profile:hover {
+    background-color: #123dbd;
+    transform: scale(1.1);
+    transition: 0.15s linear;
+}
+
+/* .button_div .view_profile:hover{
+    box-shadow: 0px 8px 20px -2px #507BFC;
+    background-color: #2855de;
+    cursor: pointer;
+} */
+
+.button_div .add_friend {
+    background-color: #f96c88;
+    color: white;
+}
+
+.button_div .add_friend {
+    box-shadow: 0px 8px 20px -2px #f96c88;
+    background-color: #fb4a6e;
+    cursor: pointer;
+}
+
+.button_div .add_friend:hover {
+    background-color: #ea1943;
+    transform: scale(1.1);
+    transition: 0.15s linear;
+}
+
+/* .button_div .add_friend:hover{
+    box-shadow: 0px 8px 20px -2px #f96c88;
+    background-color: #fb4a6e;
+    cursor: pointer;
+} */

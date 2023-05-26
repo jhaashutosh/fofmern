@@ -13,24 +13,15 @@ exports.allDetailsValidator = async (req, res, next) => {
     */
 
   console.log("📑 AllDetails Form Data: \n", req.body);
-  let {
-    fullName,
-    imageURL,
-    instagram,
-    bio,
-    gender,
-    state,
-    city,
-    schoolDetails,
-  } = req.body;
+  let { fullName, imageURL, instagram, bio, gender, state, city, schoolDetails } = req.body;
 
   //Handling all False Value: undefined / null / 0 / -0 / NaN / "" / Converting to String: "undefined" / "null" / "0" / "-0" / "NaN" / ""
   if (!fullName) fullName = "";
   if (!imageURL) imageURL = "";
   if (!instagram) instagram = "";
   if (!bio) bio = "";
-  if (!gender) gender = "";
-  if (!state) state = "";
+  if (!gender) gender = "other";
+  if (!state) state = "select";
   if (!city) city = "";
   if (!schoolDetails) schoolDetails = {};
 
@@ -64,46 +55,9 @@ exports.allDetailsValidator = async (req, res, next) => {
   let allErrors = [];
 
   //Error Handling: -------------------------------------------------------------------->
-  const allStates = [
-    "select",
-    "Andaman and Nicobar Islands",
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chandigarh",
-    "Chhattisgarh",
-    "Dadra and Nagar Haveli",
-    "Daman and Diu",
-    "Delhi",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jammu and Kashmir",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Lakshadweep",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Orissa",
-    "Pondicherry",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Tripura",
-    "Uttaranchal",
-    "Uttar Pradesh",
-    "West Bengal",
-  ];
+  const allStates = ["select","Andaman and Nicobar Islands","Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chandigarh","Chhattisgarh","Dadra and Nagar Haveli","Daman and Diu","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir","Jharkhand","Karnataka","Kerala","Lakshadweep","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Orissa","Pondicherry","Punjab","Rajasthan","Sikkim","Tamil Nadu","Tripura","Uttaranchal","Uttar Pradesh","West Bengal"];
 
-  const allGenders = ["Male", "Female", "Other"];
+  const allGenders = ["male", "female", "other"];
 
   if (!allStates.includes(state))
     allErrors.push({ stateError: "Invalid State" });

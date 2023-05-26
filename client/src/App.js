@@ -8,6 +8,7 @@ import Error404 from "./pages/Error404";
 import AllDetails from "./pages/AllDetails";
 import Logout from "./pages/Logout";
 import VerifyEmail from "./pages/VerifyEmail";
+import SearchFriends from "./pages/SearchFriends";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/allDetails" element={<AllDetails />} />
+          <Route path="/searchFriends" element={<SearchFriends />} />
           <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<Error404 />} />
