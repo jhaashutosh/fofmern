@@ -148,7 +148,7 @@ const Signup = () => {
 
                         <div className={style.inputfield}>
                             <i className="fas fa-envelope"></i>
-                            <input ref={emailRef} className={style.inputarea} type="text" placeholder="Enter your email" id="email" name="email" autoComplete='true' />
+                            <input ref={emailRef} className={style.inputarea} type="email" placeholder="Enter your email" id="email" name="email" autoComplete='true' />
                         </div>
                         {/* Email Error! */}
                         <p className={style.error_message}>{emailError}</p>
