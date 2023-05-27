@@ -2,14 +2,13 @@
 
 
 /* -------Search Friend CSS----------------------- */
-.heading1{
+.heading1 {
     background-color: black;
     color: white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     padding: 15px;
 }
 
-.container_div{
+.container_div {
     background-color: aliceblue;
     padding: 20px;
     width: 100%;
@@ -17,24 +16,22 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 /*------------------------------ */
 
-.register_page{
-    background-image: linear-gradient(135deg, #B822FF ,#0AACEA);
+.register_page {
+    background-image: linear-gradient(135deg, #B822FF, #0AACEA);
     width: 100%;
-
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.maindiv{
+.maindiv {
     margin: 50px 0px;
 }
 
-.heading{
+.heading {
     text-align: center;
     background-color: black;
     height: 80px;
@@ -43,23 +40,23 @@
     border-radius: 10px 10px 0px 0px;
 }
 
-.html_form{
+.html_form {
     background-color: white;
     /* width: 850px; */
     padding: 40px;
     border-radius: 0px 0px 10px 10px;
 }
 
-.html_form fieldset{
+.html_form fieldset {
     margin-top: 20px;
     padding: 10px;
 }
 
-.html_form table{
+.html_form table {
     border-spacing: 10px 10px;
 }
 
-.inputfield{
+.inputfield {
     width: 250px;
     padding: 5px 10px;
 
@@ -72,52 +69,52 @@
     /* outline: none; */
 }
 
-.labeltext{
+.labeltext {
     font-weight: 600;
 }
 
 
-.html_form input[type="number"]{
+.html_form input[type="number"] {
     padding: 5px 10px;
     width: 50px;
-    margin: 0; 
+    margin: 0;
 
     /* border-radius: 5px; */
     border-style: solid;
     border-width: thin;
 }
 
-.html_form input[type="date"]{
+.html_form input[type="date"] {
     width: 100%;
     padding: 4px 8px;
 }
 
-.html_form input[type='radio']{
+.html_form input[type='radio'] {
     margin: 0px 5px;
 }
 
-.html_form select{
+.html_form select {
     padding: 3px 10px;
     width: 271px;
 }
 
 /* Code for hide up and down counter in type="number" */
-.html_form input[type=number]::-webkit-inner-spin-button, 
-.html_form input[type=number]::-webkit-outer-spin-button { 
+.html_form input[type=number]::-webkit-inner-spin-button,
+.html_form input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    margin: 0; 
+    margin: 0;
     padding: 0;
 }
 
-.profilepic_div{
+.profilepic_div {
     width: 200px;
     height: 200px;
     border-radius: 50%;
 }
 
-.profilepic{
+.profilepic {
     width: 200px;
     height: 200px;
     border-radius: 50%;
@@ -125,7 +122,7 @@
 }
 
 
-.register_button{
+.register_button {
     background-color: #FD4D5A;
     color: white;
 
@@ -139,7 +136,7 @@
     /* letter-spacing: 1px; */
 }
 
-.addnew_field_button{
+.addnew_field_button {
     background-color: #1CBA93;
     color: white;
 

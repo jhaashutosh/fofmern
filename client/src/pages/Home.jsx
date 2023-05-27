@@ -54,10 +54,10 @@ const Home = () => {
 
         Object.keys(schoolDetails).forEach(async (key) => {
             const value = schoolDetails[key];
-            console.log(`Key: ${key}, Value: ${value}`);
+            // console.log(`Key: ${key}, Value: ${value}`);
 
             const data = await searchFriends({ className: key, hashString: value });
-            console.log("X: ", data);
+            // console.log("Data of Class: ", data);
 
             if (data.length != 0) {
                 setClassmates((prev) => {

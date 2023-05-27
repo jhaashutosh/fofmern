@@ -8,8 +8,9 @@ const {
   // resendVerifyMail,
   logoutController,
   forgotPasswordController,
-  resetPasswordController,
+  setNewPasswordController,
   sendVerificationMailController,
+  checkResetPasswordTokenController,
 } = require("../controllers/authController");
 
 const { signupValidator } = require("../middlewares/signupValidator");
@@ -29,6 +30,8 @@ router.get("/logout", logoutController);
 
 router.post("/forgotPassword", forgotPasswordController);
 
-router.post("/resetPassword/:token", resetPasswordController);
+router.get("/checkResetPasswordToken/:token", checkResetPasswordTokenController);
+
+router.post("/setNewPassword/:token", setNewPasswordController);
 
 module.exports = router;

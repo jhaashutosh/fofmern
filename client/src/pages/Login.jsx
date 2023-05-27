@@ -84,7 +84,7 @@ const Login = () => {
                         {/* Password Errors! */}
                         <p className={style.error_message}> {passwordError} </p>
                         
-                        <Link to='/forgotpassword'>Forgot Password?</Link> <br/>
+                        <Link to='/forgotPassword'>Forgot Password?</Link> <br/>
 
                         <input type="submit" className={style.submit} value="Login"/> <br/>
                     </form>

@@ -1,4 +1,5 @@
 const allDetails = require("../models/AllDetails");
+const signUpDetails = require("../models/SignUpDetails");
 
 //Function for Validation of Search Friend Hash String
 const validateHashString = (hashString) => {
@@ -29,9 +30,17 @@ exports.allDetailsController = async (req, res) => {
 		.save()
 		.then((data) => {
 			console.log("✅ All Details Saved to Database Successfully! \n", data);
-			res
-				.status(200)
-				.json({ message: "✅ All Details Saved to Database Successfully!", redirect: "/" });
+
+			//Updating isRegistered to true in SignUpDetails
+			signUpDetails.updateOne({ username }, { isregistered: true })
+				.then((data) => {
+					console.log("✅ isRegistered Updated to True in SignUpDetails Successfully! \n", data);
+				})
+				.catch((err) => {
+					console.log("😥 Error in Updating isRegistered to True in SignUpDetails: \n", err);
+				});
+
+			res.status(200).json({ message: "✅ All Details Saved to Database Successfully!", redirect: "/" });
 		})
 
 		.catch((err) => {
