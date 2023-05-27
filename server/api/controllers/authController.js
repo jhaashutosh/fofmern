@@ -10,28 +10,6 @@ const AllDetails = require("../models/AllDetails");
 const { createPasscode } = require("../utility/jwtPasscode");
 const { sendMail } = require("../utility/sendMail");
 
-const sendVerifyMail = async (name, email, user_id) => {
-	const userToken = createPasscode("50m", { user_id: user_id });
-	console.log("🔑Email Verification Token: ", userToken);
-
-	const userDetails = await SignUpDetails.findById(user_id);
-	if (!userDetails) {
-		return res.status(404).json({ error: "User not found" });
-	}
-
-	const updatedNumberOfTries = userDetails.numberOfTries + 1;
-
-	const updatedVerify = await SignUpDetails.updateOne(
-		{ _id: user_id },
-		{ $set: { numberOfTries: updatedNumberOfTries } }
-	);
-
-	let subject = "Verification mail from FOF";
-	let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${process.env.VERIFY_URL + userToken}>VERIFY</a></p>`;
-
-	return (confirmation = sendMail(email, subject, HTML_STRING));
-};
-
 //What is the use of this Function resendVerifyMail? --------------------->
 exports.resendVerifyMail = async (req, res) => {
 	const { username, email, password } = req.body;
@@ -60,6 +38,31 @@ exports.resendVerifyMail = async (req, res) => {
 	}
 };
 
+
+//Send Verification Mail -> GET Method  --> /auth/sendVerificationMail/:id
+const sendVerifyMail = async (name, email, user_id) => {
+	const userToken = createPasscode("50m", { user_id: user_id });
+	console.log("🔑Email Verification Token: ", userToken);
+
+	const userDetails = await SignUpDetails.findById(user_id);
+	if (!userDetails) {
+		return res.status(404).json({ error: "User not found" });
+	}
+
+	const updatedNumberOfTries = userDetails.numberOfTries + 1;
+
+	const updatedVerify = await SignUpDetails.updateOne(
+		{ _id: user_id },
+		{ $set: { numberOfTries: updatedNumberOfTries } }
+	);
+
+	let subject = "Verification mail from FOF";
+	let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${process.env.VERIFY_URL + userToken}>VERIFY</a></p>`;
+
+	return (confirmation = sendMail(email, subject, HTML_STRING));
+};
+
+//VerifyMail Route -> GET Method  --> /auth/verify/:id
 exports.verifyMail = async (req, res) => {
 	const userToken = req.params.id;
 	try {
@@ -213,7 +216,7 @@ exports.logoutController = (req, res) => {
 	res.send({ logoutMessage: "Logout Successful!", redirect: '/login' });
 };
 
-//Forgot Password Route -> POST Method  --> /auth/forgotpassword
+//Forgot Password Route -> POST Method  --> /auth/forgotPassword
 exports.forgotPasswordController = async (req, res) => {
 	/*Input Form Data: -->
 	  {
@@ -224,14 +227,14 @@ exports.forgotPasswordController = async (req, res) => {
 	let email = req.body.email;
 	console.log("📑 Forgot Password Form Data: \n", email);
 
-	let allErrors = [];
+	let errorMessage;
 
 	//Handling False Values: Null, Undefined, Empty String, 0, -1, False, NaN
 	if (!email) email = "";
 	if (email === "") {
-		allErrors.push({ emailError: "Email is Required!" });
+		errorMessage = "😐 Email is required!";
 	} else if (!validator.isEmail(email)) {
-		allErrors.push({ emailError: "Invalid Email!" });
+		errorMessage = "❌📧 Invalid Email ID!";
 	} else {
 		//Checking if Email is present in Database. -> SignUpDetails Model
 		const user = await SignUpDetails.findOne({ email });
@@ -240,43 +243,63 @@ exports.forgotPasswordController = async (req, res) => {
 			//Sending Reset Password Mail-------------------->
 
 			//Creating Token
-			const userToken = jwt.sign(
-				{ id: user._id, email: user.email, username: user.username },
-				process.env.JWT_SECRET,
-				{
-					expiresIn: process.env.JWT_EXPIRES_IN,
-				}
-			);
-
+			const userToken = jwt.sign({ id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 			console.log("🔑Forgot Password Token: ", userToken);
 
 			let subject = "FOF - Reset Password! ";
-			let HTML_STRING = `<p> Hello ${user.username
-				} !,<br>This is your reset password mail!, Click here to reset your password: <br> <a href=${process.env.FORGOT_PASS_URL + userToken
-				}>VERIFY</a></p>`;
+			let HTML_STRING = `<p> Hello ${user.username} !,<br>This is your reset password mail!, Click here to reset your password: <br> <a href=${process.env.FORGOT_PASS_URL + userToken}>VERIFY</a></p>`;
 
-			const confirmation = await sendMail2(email, subject, HTML_STRING);
+			const confirmation = await sendMail(email, subject, HTML_STRING);
 			console.log("📧 Mail Sent: ", confirmation);
 			if (!confirmation) {
-				allErrors.push({ emailError: "Error Sending Reset Password Mail!" });
+				errorMessage = "😢📤 Error! Mail server not working! (Mail not Sent)";
 			}
+
 		} else {
-			allErrors.push({ emailError: "Email is not Registered!" });
+			errorMessage = "❌ Email is not Registered!";
 		}
 	}
 
 	//Sending Response
-	if (allErrors.length > 0) {
-		return res.status(400).send({ allErrors });
+	if (errorMessage) {
+		return res.status(200).send({ message: errorMessage, mailSent: false });
 	} else {
-		return res
-			.status(200)
-			.send({ message: "Reset Password Mail Sent Successfully!" });
+		return res.status(200).send({ message: "📩🥳 Reset Password Mail Sent Successfully!", mailSent: true });
 	}
 };
 
-//Reset Password Route -> POST Method  --> /auth/resetpassword
-exports.resetPasswordController = async (req, res) => {
+//Check Reset Password Token Route -> GET Method  --> /auth/checkResetPasswordToken/:token
+exports.checkResetPasswordTokenController = async (req, res) => {
+
+	const token = req.params.token;
+	console.log("🔑 Reset Password Token: ", token);
+
+	let errorMessage;
+
+	//Checking if Token is Valid or Not
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		console.log("🔑 Decoded Password Token: ", decoded);
+		const user = await SignUpDetails.findById(decoded.id);
+		console.log("👤 User: ", user);
+		if (!user) {
+			errorMessage = "❌ User not Found!";
+		}
+	} catch (err) {
+		console.log("🔑 Error Decoding Token: ", err);
+		errorMessage = "❌ Invalid Token! or 🕒Token Expired!";
+	}
+
+	//Sending Response
+	if (errorMessage) {
+		return res.status(200).send({ message: errorMessage, validToken: false });
+	} else {
+		return res.status(200).send({ message: "🔑🥳 Token is Valid!", validToken: true });
+	}
+};
+
+//Set New Password Route -> POST Method  --> /auth/setNewPassword/:token
+exports.setNewPasswordController = async (req, res) => {
 	/*Input Form Data: -->
 	  {
 		  "password" : "pass123",
@@ -328,12 +351,7 @@ exports.resetPasswordController = async (req, res) => {
 				//Creating Hashed Password
 				const hashPassword = await bcrypt.hash(password, 12);
 
-				console.log(
-					"🔴 Values: ",
-					decodedToken.email,
-					decodedToken.username,
-					hashPassword
-				);
+				console.log("🔴 Values: ", decodedToken.email, decodedToken.username, hashPassword);
 
 				//FindOneAndUpdate -> SignUpDetails Model
 				try {
@@ -353,8 +371,8 @@ exports.resetPasswordController = async (req, res) => {
 
 	//Sending Response
 	if (allErrors.length > 0) {
-		return res.status(400).send({ allErrors: allErrors });
+		return res.status(200).send({ allErrors: allErrors, passwordUpdated: false });
 	} else {
-		return res.status(200).send({ message: "Password Updated Successfully!" });
+		return res.status(200).send({ message: "Password Updated Successfully!", passwordUpdated: true });
 	}
 };
