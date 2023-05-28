@@ -12,6 +12,7 @@ import SearchFriends from "./pages/SearchFriends";
 import ForgotPassword from "./pages/ForgotPassword";
 import SetNewPassword from "./pages/SetNewPassword";
 import CheckValidEmailURL from "./pages/CheckValidEmailURL";
+import EditAllDetails from "./pages/EditAllDetails";
 
 function App() {
     return (
@@ -23,11 +24,12 @@ function App() {
                     <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/allDetails"> AllDetails </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/editAllDetails"> EditAllDetails </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/searchFriends"> SearchFriends </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/sendVerificationMail/enterUserId"> VerifyEmail </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> Check Valid Email URL </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> CheckValidEmailURL </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/forgotPassword"> Forgot Password </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> Set New Password </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
                 </nav>
@@ -38,6 +40,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/allDetails" element={<AllDetails />} />
+                    <Route path="/editAllDetails" element={<EditAllDetails />} />
                     <Route path="/searchFriends" element={<SearchFriends />} />
                     <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />} />
                     <Route path="/checkValidEmailURL/:token" element={<CheckValidEmailURL />} />

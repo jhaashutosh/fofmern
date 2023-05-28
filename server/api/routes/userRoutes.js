@@ -6,12 +6,16 @@ const {
   allDetailsController,
   searchFriendsController,
   userInformationController,
+  fetchAllDetailsController,
+  updateAllDetailsController,
 } = require("../controllers/userController");
 
 
 router.post("/allDetails", authVerifyMiddleware, allDetailsValidator, allDetailsController);
-// router.post("/searchFriends", authVerifyMiddleware, searchFriendsController);
-router.post("/searchFriends", searchFriendsController);
+router.get('/fetchAllDetails',authVerifyMiddleware, fetchAllDetailsController);
+router.put("/updateAllDetails", authVerifyMiddleware, allDetailsValidator, updateAllDetailsController);
+
+router.post("/searchFriends", authVerifyMiddleware, searchFriendsController);
 router.get("/userInformation", authVerifyMiddleware, userInformationController);
 
 module.exports = router;

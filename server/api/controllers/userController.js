@@ -13,7 +13,7 @@ const validateHashString = (hashString) => {
 	return true;
 }
 
-//All Details Route -> POST Method  --> /auth/allDetails
+//All Details Route -> POST Method  --> /user/allDetails
 exports.allDetailsController = async (req, res) => {
 	console.log("📑 All Details Page Data (After Validation): \n", req.data);
 
@@ -49,6 +49,43 @@ exports.allDetailsController = async (req, res) => {
 		});
 };
 
+//Fetch All Details ROute -> GET Method --> /user/fetchAllDetails
+exports.fetchAllDetailsController = async (req, res) => {
+	const username = req.user.username;
+	console.log("🙋Username: (Edit Detail)", username);
+
+	let userData;
+	//Fetching All Details from Database
+	try {
+		userData = await allDetails.findOne({ username: username });
+		console.log("👤Edit Details:=> User Data: \n", userData);
+		return res.status(200).json({ userData: userData });
+	}
+	catch (err) {
+		console.log("😥 Error in Fetching All Details from Database: \n", err);
+		return res.status(200).json({ errorMessage: "😥 Error in Fetching All Details from Database!" });
+	}
+}
+
+//Update All Details Route -> PUT Method  --> /user/updateAllDetails
+exports.updateAllDetailsController = async (req, res) => {
+	console.log("📑 Update All Details Page Data (After Validation): \n", req.data);
+
+	const username = req.user.username;
+	console.log("🙋Username: ", username);
+
+	//Updating All Details in Database
+	let userData;
+	try{
+		userData = await allDetails.updateOne({ username }, req.data);
+		console.log("✅ All Details Updated Successfully! \n", userData);
+		return res.status(200).json({ message: "✅ All Details Updated Successfully!", isUpdated: true });
+	}
+	catch(err){
+		console.log("😥 Error in Updating All Details in Database: \n", err);
+		return res.status(200).json({ errorMessage: "😥 Error in Updating All Details in Database!", isUpdated: false });
+	}
+}
 
 //Search Friends by Class Details Route -> POST Method  --> /user/searchFriends
 exports.searchFriendsController = async (req, res) => {
