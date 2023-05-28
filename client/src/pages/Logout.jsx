@@ -1,9 +1,11 @@
 import React from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useFOFContext } from "../context/context";
 
 const Logout = () => {
 
+    const { isLoggedIn, setIsLoggedIn } = useFOFContext();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -13,6 +15,7 @@ const Logout = () => {
         axios.get(url, { withCredentials: true })
             .then((response) => {
                 const redirect = response.data.redirect;
+                setIsLoggedIn(false);
                 navigate(redirect);
             })
             .catch((error) => {

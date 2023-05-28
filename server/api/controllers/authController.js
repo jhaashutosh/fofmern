@@ -319,14 +319,14 @@ exports.setNewPasswordController = async (req, res) => {
 		allErrors.push({ confirmPasswordError: "Confirm Password is Required!" });
 
 	else if (password !== confirmPassword)
-		allErrors.push({confirmPasswordError: "Password and Confirm Password should be same!"});
+		allErrors.push({ confirmPasswordError: "Password and Confirm Password should be same!" });
 
 	else if (password.length < 3)
-		allErrors.push({passwordError: "Password should be atleast 3 characters long!"});
+		allErrors.push({ passwordError: "Password should be atleast 3 characters long!" });
 
 	else if (password.length > 100)
-		allErrors.push({passwordError: "Password should be atmost 100 characters long!"});
-		
+		allErrors.push({ passwordError: "Password should be atmost 100 characters long!" });
+
 	else {
 		//Getting Token from URL
 		const token = req.params.token;
@@ -376,3 +376,30 @@ exports.setNewPasswordController = async (req, res) => {
 		return res.status(200).send({ message: "Password Updated Successfully!", passwordUpdated: true });
 	}
 };
+
+//Check If User is Logged In or Not -> GET Method  --> /auth/checkIfUserIsLoggedIn
+exports.checkIfUserIsLoggedInController = async (req, res) => {
+
+	let token;
+
+	//Fetching JWT Token from Cookie
+	if (req.cookies && req.cookies.jwtToken) {
+		token = req.cookies.jwtToken;
+	}
+	console.log("🍪 JWT Token from Cookie: (checkIfUserIsLoggedIn)", token);
+
+	//Decoding JWT Token
+	let decodedToken;
+	try {
+		decodedToken = await jwt.verify(token, process.env.JWT_SECRET);
+		console.log("🔑 Decoded JWT Token: ", decodedToken);
+	}
+	catch (err) {
+		console.log("Error Decoding JWT Token!", err);
+	}
+
+	//Sending Response
+	if (decodedToken) return res.status(200).send({ isLoggedIn: true });
+	else return res.status(200).send({ isLoggedIn: false });
+
+}

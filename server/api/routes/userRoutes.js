@@ -12,10 +12,13 @@ const {
 
 
 router.post("/allDetails", authVerifyMiddleware, allDetailsValidator, allDetailsController);
-router.get('/fetchAllDetails',authVerifyMiddleware, fetchAllDetailsController);
+
+router.get('/fetchAllDetails', authVerifyMiddleware, fetchAllDetailsController);
+
 router.put("/updateAllDetails", authVerifyMiddleware, allDetailsValidator, updateAllDetailsController);
 
 router.post("/searchFriends", authVerifyMiddleware, searchFriendsController);
+
 router.get("/userInformation", authVerifyMiddleware, userInformationController);
 
 module.exports = router;
