@@ -11,30 +11,6 @@ const VerifyEmail = () => {
     const { userId } = useParams();
     console.log("User Id: ", userId);
 
-
-    // function checkIfEmailAlreadyVerified() {
-    //     console.log("USEEFFECT");
-
-    //     const url = `http://localhost:4000/auth/sendVerificationMail/${userId}`;
-
-    //     axios.get(url)
-    //         .then(res => {
-    //             console.log("Email Verification Response: ", res.data);
-
-    //             if (res.data.status === 'success') {
-    //                 navigate('/login');
-    //             }
-    //         })
-    //         .catch(err => {
-    //             console.log("Email Verification Error!", err.message);
-    //         });
-    // }
-
-    // useEffect(() => {
-    //     //Check if the Email is Verified if Verified Redirect to Login Page
-    //     checkIfEmailAlreadyVerified();
-    // }, []);
-
     function sendMail() {
 
         setEmailMessage("📤 Sending mail...");
