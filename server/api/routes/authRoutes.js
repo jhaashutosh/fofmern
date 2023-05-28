@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
   signupController,
-  verifyMail,
+  checkValidEmailURL,
   loginController,
   // resendVerifyMail,
   logoutController,
@@ -22,7 +22,7 @@ router.post("/login", loginValidator, loginController);
 
 router.get("/sendVerificationMail/:id", sendVerificationMailController);
 
-router.get("/verify/:id", verifyMail);
+router.get("/checkValidEmailURL/:id", checkValidEmailURL);
 
 // router.post("/resendVerify", resendVerifyMail);
 

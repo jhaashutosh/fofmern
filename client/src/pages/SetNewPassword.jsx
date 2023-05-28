@@ -13,6 +13,7 @@ const SetNewPassword = () => {
 
     const [validURL, setValidURL] = useState(false);
     const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
+    const [userName, setUserName] = useState("");
 
     const passwordRef = useRef("");
     const confirmPasswordRef = useRef("");
@@ -26,18 +27,16 @@ const SetNewPassword = () => {
         const password = passwordRef.current.value;
         const confirmPassword = confirmPasswordRef.current.value;
 
-        // console.log("Password: ", password, '\nConfirm Password: ', confirmPassword);
-
         setPasswordError('');
 
         if (password === '') setPasswordError("😑 Please Enter Password!");
 
-        else if(confirmPassword === '') setPasswordError("😑 Please Enter Confirm Password!");
+        else if (confirmPassword === '') setPasswordError("😑 Please Enter Confirm Password!");
 
         else if (password.length < 3) setPasswordError("😐 Password must be 2 Character Long!");
 
         else if (password !== confirmPassword) setPasswordError("🙄 Confirm Password do not match!")
-        
+
 
         else {
 
@@ -45,26 +44,26 @@ const SetNewPassword = () => {
 
             const url = `http://localhost:4000/auth/setNewPassword/${token}`;
 
-            axios.post(url, {password, confirmPassword})
-                .then(res=>{
-                    console.log("Response from Server (SetNewPassword): ",res.data);
+            axios.post(url, { password, confirmPassword })
+                .then(res => {
+                    console.log("Response from Server (SetNewPassword): ", res.data);
 
-                    if(res.data.passwordUpdated){
+                    if (res.data.passwordUpdated) {
                         setPasswordResetSuccess(true);
                     }
-                    else{
+                    else {
                         const arr = res.data.allErrors;
-                        for(let i=0;i<arr.length;i++){
-                            for(let key in arr[i]){
-                                if(key=='passwordError') setPasswordError(arr[i][key]);
+                        for (let i = 0; i < arr.length; i++) {
+                            for (let key in arr[i]) {
+                                if (key == 'passwordError') setPasswordError(arr[i][key]);
                                 else setPasswordError(arr[i][key]);
                             }
                         }
                     }
-                    
+
                 })
-                .catch(err=>{
-                    console.log("Error Resetting Password! ",err.message);
+                .catch(err => {
+                    console.log("Error Resetting Password! ", err.message);
                 });
         }
 
@@ -75,18 +74,19 @@ const SetNewPassword = () => {
 
         const url = `http://localhost:4000/auth/checkResetPasswordToken/${token}`;
         axios.get(url)
-            .then(res=>{
-                console.log("Server Response (Set New Password): ",res.data);
-                if(res.data.validToken){
+            .then(res => {
+                console.log("Server Response (Set New Password): ", res.data);
+                if (res.data.validToken) {
+                    setUserName(res.data.userName);
                     setValidURL(true);
                 }
-                else{
+                else {
                     alert(res.data.message);
                 }
 
             })
-            .catch(err=>{
-                console.log("Error Validating URL (Reset Password)",err.message);
+            .catch(err => {
+                console.log("Error Validating URL (Reset Password)", err.message);
             });
     }
 
@@ -96,7 +96,7 @@ const SetNewPassword = () => {
 
     if (passwordResetSuccess) {
         return (
-            <PasswordResetSuccessful />
+            <PasswordResetSuccessful userName={userName} />
         )
     }
 

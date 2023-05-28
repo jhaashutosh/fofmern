@@ -41,7 +41,7 @@ exports.resendVerifyMail = async (req, res) => {
 
 //Send Verification Mail -> GET Method  --> /auth/sendVerificationMail/:id
 const sendVerifyMail = async (name, email, user_id) => {
-	const userToken = createPasscode("50m", { user_id: user_id });
+	const userToken = createPasscode("50m", { user_id: user_id, email: email });
 	console.log("🔑Email Verification Token: ", userToken);
 
 	const userDetails = await SignUpDetails.findById(user_id);
@@ -62,23 +62,25 @@ const sendVerifyMail = async (name, email, user_id) => {
 	return (confirmation = sendMail(email, subject, HTML_STRING));
 };
 
-//VerifyMail Route -> GET Method  --> /auth/verify/:id
-exports.verifyMail = async (req, res) => {
+//VerifyMail Route -> GET Method  --> /auth/checkValidEmailURL/:token
+exports.checkValidEmailURL = async (req, res) => {
 	const userToken = req.params.id;
 	try {
-		const userId = jwt.verify(userToken, process.env.JWT_SECRET).payload[0]
-			.user_id;
+		const userData = jwt.verify(userToken, process.env.JWT_SECRET).payload[0];
+		const userId = userData.user_id;
+
+		console.log("ValidEmailURL Token: ", userData);
 
 		const updatedVerify = await SignUpDetails.updateOne(
 			{ _id: userId },
 			{ $set: { isverified: true } }
 		);
 
-		return res.status(200).send("📩 Email Verified Successfully! (Go to Login Page)");
+		return res.status(200).json({ message: 'Email Verified Successfully! ', emailVerified: true, email: userData.email });
 
 	} catch (err) {
 		console.log("⚠ Error! verifying Email \n", err);
-		return res.status(500).send("⚠ Error! verifying Email");
+		return res.status(200).json({ message: "😢 Error! Verifying Email! \n🕒URL Timeout or ❌Invalid URL", emailVerified: false });
 	}
 };
 
@@ -275,16 +277,15 @@ exports.checkResetPasswordTokenController = async (req, res) => {
 	console.log("🔑 Reset Password Token: ", token);
 
 	let errorMessage;
+	let userName;
 
 	//Checking if Token is Valid or Not
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 		console.log("🔑 Decoded Password Token: ", decoded);
+		userName = decoded.username;
 		const user = await SignUpDetails.findById(decoded.id);
-		console.log("👤 User: ", user);
-		if (!user) {
-			errorMessage = "❌ User not Found!";
-		}
+		if (!user) errorMessage = "❌ User not Found!";
 	} catch (err) {
 		console.log("🔑 Error Decoding Token: ", err);
 		errorMessage = "❌ Invalid Token! or 🕒Token Expired!";
@@ -294,7 +295,7 @@ exports.checkResetPasswordTokenController = async (req, res) => {
 	if (errorMessage) {
 		return res.status(200).send({ message: errorMessage, validToken: false });
 	} else {
-		return res.status(200).send({ message: "🔑🥳 Token is Valid!", validToken: true });
+		return res.status(200).send({ message: "🔑🥳 Token is Valid!", validToken: true, userName: userName });
 	}
 };
 
@@ -313,20 +314,19 @@ exports.setNewPasswordController = async (req, res) => {
 	//Validating Password!
 	let allErrors = [];
 	if (!password) allErrors.push({ passwordError: "Password is Required!" });
+
 	if (!confirmPassword)
 		allErrors.push({ confirmPasswordError: "Confirm Password is Required!" });
+
 	else if (password !== confirmPassword)
-		allErrors.push({
-			confirmPasswordError: "Password and Confirm Password should be same!",
-		});
+		allErrors.push({confirmPasswordError: "Password and Confirm Password should be same!"});
+
 	else if (password.length < 3)
-		allErrors.push({
-			passwordError: "Password should be atleast 3 characters long!",
-		});
+		allErrors.push({passwordError: "Password should be atleast 3 characters long!"});
+
 	else if (password.length > 100)
-		allErrors.push({
-			passwordError: "Password should be atmost 100 characters long!",
-		});
+		allErrors.push({passwordError: "Password should be atmost 100 characters long!"});
+		
 	else {
 		//Getting Token from URL
 		const token = req.params.token;

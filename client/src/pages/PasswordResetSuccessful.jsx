@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import style from '../styles/passwordResetSuccessful.module.css';
 
-const PasswordResetSuccessful = () => {
+const PasswordResetSuccessful = ({ userName }) => {
+
     return (
         <div className={style.password_reset_successful_page}>
 
@@ -14,10 +15,9 @@ const PasswordResetSuccessful = () => {
 
                 <h1>Password Changed! 🥳</h1>
 
-                <p>Your Password has been changed successfully.</p>
+                <p>👋Hello! <strong> {userName} </strong> your password has been changed successfully.</p>
 
                 <div className={style.buttondiv}>
-                    {/* <a className={style.button} href="/login">Login to your Account</a> */}
                     <Link to="/login" className={style.button}>Login to your Account</Link>
                 </div>
 
