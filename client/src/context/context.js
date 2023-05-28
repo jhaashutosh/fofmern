@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState} from "react";
 
 export const FOFContext = createContext({});
 
@@ -8,12 +8,11 @@ export const useFOFContext = () => {
 
 export const FOFContextProvider = ({ children }) => {
 
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const values = {
         // state --------------
-        isLogin,
-        setIsLogin,
+        isLoggedIn, setIsLoggedIn,
 
         // functions-----------
     }

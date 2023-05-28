@@ -5,16 +5,18 @@ const {
   signupController,
   checkValidEmailURL,
   loginController,
-  // resendVerifyMail,
   logoutController,
   forgotPasswordController,
   setNewPasswordController,
   sendVerificationMailController,
   checkResetPasswordTokenController,
+  checkIfUserIsLoggedInController,
 } = require("../controllers/authController");
 
 const { signupValidator } = require("../middlewares/signupValidator");
 const { loginValidator } = require("../middlewares/loginValidator");
+
+router.get("/checkIfUserIsLoggedIn", checkIfUserIsLoggedInController);
 
 router.post("/signup", signupValidator, signupController);
 
@@ -23,8 +25,6 @@ router.post("/login", loginValidator, loginController);
 router.get("/sendVerificationMail/:id", sendVerificationMailController);
 
 router.get("/checkValidEmailURL/:id", checkValidEmailURL);
-
-// router.post("/resendVerify", resendVerifyMail);
 
 router.get("/logout", logoutController);
 

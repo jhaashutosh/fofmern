@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
+import axios from "axios";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -14,7 +15,32 @@ import SetNewPassword from "./pages/SetNewPassword";
 import CheckValidEmailURL from "./pages/CheckValidEmailURL";
 import EditAllDetails from "./pages/EditAllDetails";
 
+import { useFOFContext } from "./context/context";
+import { useEffect } from "react";
+
 function App() {
+
+    const { isLoggedIn, setIsLoggedIn } = useFOFContext();
+
+    //Check If User is Logged In or Not
+    function checkIfUserIsLoggedIn() {
+        const url = "http://localhost:4000/auth/checkIfUserIsLoggedIn";
+
+        axios.get(url, { withCredentials: true })
+            .then(res => {
+                console.log("Response in checkIfUserIsLoggedIn: ", res.data);
+                if (res.data.isLoggedIn) {
+                    setIsLoggedIn(true);
+                }
+            })
+            .catch(err => console.log("Error in checkIfUserIsLoggedIn: ", err));
+    }
+
+    useEffect(() => {
+        checkIfUserIsLoggedIn();
+    }, [isLoggedIn]);
+
+
     return (
         <div className="App">
             <BrowserRouter>
@@ -36,18 +62,23 @@ function App() {
 
                 {/*------- All Routes -------- */}
                 <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/allDetails" element={<AllDetails />} />
-                    <Route path="/editAllDetails" element={<EditAllDetails />} />
-                    <Route path="/searchFriends" element={<SearchFriends />} />
-                    <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />} />
-                    <Route path="/checkValidEmailURL/:token" element={<CheckValidEmailURL />} />
-                    <Route path="/forgotPassword" element={<ForgotPassword />} />
-                    <Route path="/setNewPassword/:token" element={<SetNewPassword />} />
-                    <Route path="/logout" element={<Logout />} />
+
+                    {/* Protected Routes -> isLoggedIn => true */}
+                    <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+                    <Route path="/allDetails" element={isLoggedIn ? <AllDetails /> : <Navigate to='/login' />} />
+                    <Route path="/editAllDetails" element={isLoggedIn ? <EditAllDetails /> : <Navigate to='/login' />} />
+                    <Route path="/searchFriends" element={isLoggedIn ? <SearchFriends /> : <Navigate to='/login' />} />
+
+                    {/* Normal Routes -> isLoggedIn => false */}
                     <Route path="*" element={<Error404 />} />
+                    <Route path="/signup" element={isLoggedIn ? <Navigate to='/' /> : <Signup />} />
+                    <Route path="/login" element={isLoggedIn ? <Navigate to='/' /> : <Login />} />
+                    <Route path="/forgotPassword" element={isLoggedIn ? <Navigate to='/' /> : <ForgotPassword />} />
+                    <Route path="/sendVerificationMail/:userId" element={isLoggedIn ? <Navigate to='/' /> : <VerifyEmail />} />
+                    <Route path="/checkValidEmailURL/:token" element={isLoggedIn ? <Navigate to='/' /> : <CheckValidEmailURL />} />
+                    <Route path="/setNewPassword/:token" element={isLoggedIn ? <Navigate to='/' /> : <SetNewPassword />} />
+                    <Route path="/logout" element={<Logout />} />
+
                 </Routes>
             </BrowserRouter>
         </div>
