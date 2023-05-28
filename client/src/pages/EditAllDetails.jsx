@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import style from '../styles/allDetails.module.css';
@@ -27,7 +27,7 @@ const initialValues = {
     XII_y1: '', XII_y2: '', XII_school: '', XII_placeID: '',
 };
 
-const AllDetails = () => {
+const EditAllDetails = () => {
 
     //Form Values
     const [form, setForm] = useState(initialValues);
@@ -35,19 +35,6 @@ const AllDetails = () => {
     const [image, setImage] = useState('https://i.ibb.co/Zd5rxk7/dp.jpg');
 
     const navigate = useNavigate();
-
-    function registerDetails(data) {
-
-        const url = 'http://localhost:4000/user/allDetails';
-        axios.post(url, data, { withCredentials: true })
-            .then(res => {
-                console.log("Response (Register): ", res.data);
-                if (res.data.redirect) navigate('/');
-            })
-            .catch(err => {
-                console.log("Error! REGISTERING Details\n", err);
-            });
-    }
 
     function updateImage(e) {
         const img = e.target.value;
@@ -60,7 +47,59 @@ const AllDetails = () => {
         setForm({ ...form, [name]: value });
     }
 
+
+    function setInitialValues(data) {
+
+        console.log("Data: ", data);
+
+        //Updating Profile Image
+        setImage(data.imageURL);
+
+        const LKG = data.schoolDetails.LKG.split('#');
+        const UKG = data.schoolDetails.UKG.split('#');
+        const I = data.schoolDetails.I.split('#');
+        const II = data.schoolDetails.II.split('#');
+        const III = data.schoolDetails.III.split('#');
+        const IV = data.schoolDetails.IV.split('#');
+        const V = data.schoolDetails.V.split('#');
+        const VI = data.schoolDetails.IV.split('#');
+        const VII = data.schoolDetails.VII.split('#');
+        const VIII = data.schoolDetails.VIII.split('#');
+        const IX = data.schoolDetails.IX.split('#');
+        const X = data.schoolDetails.X.split('#');
+        const XI = data.schoolDetails.XI.split('#');
+        const XII = data.schoolDetails.XII.split('#');
+
+        setForm({
+            ...form,
+            imageURL: data.imageURL,
+            instagram: data.instagram,
+            fullName: data.fullName,
+            gender: data.gender,
+            state: data.state,
+            city: data.city,
+
+            LKG_y1: LKG[0], LKG_y2: LKG[1], LKG_school: LKG[2], LKG_placeID: LKG[3],
+            UKG_y1: UKG[0], UKG_y2: UKG[1], UKG_school: UKG[2], UKG_placeID: UKG[3],
+            I_y1: I[0], I_y2: I[1], I_school: I[2], I_placeID: I[3],
+            II_y1: II[0], II_y2: II[1], II_school: II[2], II_placeID: II[3],
+            III_y1: III[0], III_y2: III[1], III_school: III[2], III_placeID: III[3],
+            IV_y1: IV[0], IV_y2: IV[1], IV_school: IV[2], IV_placeID: IV[3],
+            V_y1: V[0], V_y2: V[1], V_school: V[2], V_placeID: V[3],
+            VI_y1: VI[0], VI_y2: VI[1], VI_school: VI[2], VI_placeID: VI[3],
+            VII_y1: VII[0], VII_y2: VII[1], VII_school: VII[2], VII_placeID: VII[3],
+            VIII_y1: VIII[0], VIII_y2: VIII[1], VIII_school: VIII[2], VIII_placeID: VIII[3],
+            IX_y1: IX[0], IX_y2: IX[1], IX_school: IX[2], IX_placeID: IX[3],
+            X_y1: X[0], X_y2: X[1], X_school: X[2], X_placeID: X[3],
+            XI_y1: XI[0], XI_y2: XI[1], XI_school: XI[2], XI_placeID: XI[3],
+            XII_y1: XII[0], XII_y2: XII[1], XII_school: XII[2], XII_placeID: XII[3],
+
+        });
+    }
+
+
     function handleSubmit(e) {
+
         e.preventDefault();
 
         const allValues = {
@@ -92,9 +131,49 @@ const AllDetails = () => {
         console.log("All Values: \n", allValues);
 
         // Registering Details----To Server
-        registerDetails(allValues);
+        saveDetails(allValues);
     }
 
+
+    function saveDetails(data) {
+
+        const url = 'http://localhost:4000/user/updateAllDetails';
+        axios.put(url, data, { withCredentials: true })
+            .then(res => {
+                console.log("Response Saving (EditAllDetails): ", res.data);
+                if(res.data.isUpdated) {
+                    alert(res.data.message);
+                    navigate('/');
+                }
+                else if (res.data.errorMessage) {
+                    alert(res.data.errorMessage);
+                }
+            })
+            .catch(err => {
+                console.log("Error! Saving EDITING Details\n", err);
+            });
+    }
+
+    function fetchData() {
+        const url = 'http://localhost:4000/user/fetchAllDetails';
+        axios.get(url, { withCredentials: true })
+            .then(res => {
+                console.log("Response EditAllDetails (Fetch): ", res.data);
+                if (res.data.userData) {
+                    setInitialValues(res.data.userData);
+                }
+                else if (res.data.errorMessage) {
+                    alert(res.data.errorMessage);
+                }
+            })
+            .catch(err => {
+                console.log("Error! Fetching Details\n", err);
+            });
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
 
     return (
@@ -104,7 +183,7 @@ const AllDetails = () => {
             <div className={style.maindiv}>
 
                 <div className={style.heading}>
-                    <h1>REGISTRATION</h1>
+                    <h1>EDIT DETAILS</h1>
                 </div>
 
                 <form onSubmit={handleSubmit} className={style.html_form}>
@@ -170,7 +249,8 @@ const AllDetails = () => {
                                     <td><label className={style.labeltext} htmlFor="state">State : </label></td>
 
                                     <td>
-                                        <select name='state' onChange={handleChange} defaultValue={'select'}>
+
+                                        <select className={style.inputfield} name="state" value={form.state} onChange={handleChange} >
                                             <option value="select" >Select...</option>
                                             <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                             <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -238,15 +318,6 @@ const AllDetails = () => {
                                     <th>School Name (Google Map)</th>
                                     <th>Place ID (Google Map)</th>
                                 </tr>
-
-                                <tr style={{ fontSize: "13px", color: "grey" }}>
-                                    <td><strong>Eg:</strong></td>
-                                    <td>2010</td>
-                                    <td>2011</td>
-                                    <td>Kendriya Vidyalaya Sector 12 Dwarka</td>
-                                    <td>ChIJAQAAQMUaDTkR2Rh9YCDDYCs</td>
-                                </tr>
-
 
                                 <tr>
                                     <td><label htmlFor="LKG"> <strong> LKG  </strong> </label></td>
@@ -417,11 +488,13 @@ const AllDetails = () => {
 
                 </form>
 
-
             </div>
 
         </div>
-    )
+    );
+
+
+
 }
 
-export default AllDetails;
+export default EditAllDetails;
