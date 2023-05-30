@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigate, NavLink } from "react-router-dom";
 import axios from "axios";
 
+import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -38,14 +40,16 @@ function App() {
 
     useEffect(() => {
         checkIfUserIsLoggedIn();
-    }, [isLoggedIn]);
+    }, []);
 
 
     return (
         <div className="App">
+
             <BrowserRouter>
+
                 {/*-- Temporary Navbar -- */}
-                <nav style={{ backgroundColor: "yellow" }}>
+                {/* <nav style={{ backgroundColor: "yellow" }}>
                     <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
@@ -58,7 +62,10 @@ function App() {
                     <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
-                </nav>
+                </nav> */}
+
+                {/*-- Navbar -- */}
+                {isLoggedIn && <Navbar />}
 
                 {/*------- All Routes -------- */}
                 <Routes>

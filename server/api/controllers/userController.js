@@ -76,12 +76,12 @@ exports.updateAllDetailsController = async (req, res) => {
 
 	//Updating All Details in Database
 	let userData;
-	try{
+	try {
 		userData = await allDetails.updateOne({ username }, req.data);
 		console.log("✅ All Details Updated Successfully! \n", userData);
 		return res.status(200).json({ message: "✅ All Details Updated Successfully!", isUpdated: true });
 	}
-	catch(err){
+	catch (err) {
 		console.log("😥 Error in Updating All Details in Database: \n", err);
 		return res.status(200).json({ errorMessage: "😥 Error in Updating All Details in Database!", isUpdated: false });
 	}
@@ -120,6 +120,7 @@ exports.searchFriendsController = async (req, res) => {
 		//Searching Friends in Database
 		const friends = await allDetails.find({
 			[`schoolDetails.${className}`]: hashString,
+			username: { $ne: req.user.username },
 		});
 
 		// console.log("👫 Friends Found: \n", friends);

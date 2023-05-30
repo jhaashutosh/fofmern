@@ -5,34 +5,15 @@ import style from '../styles/home.module.css';
 import FriendCard from '../components/FriendCard';
 // import Loading from '../components/Loading';
 
-const initialClassmates = {
-    LKG: [], UKG: [], I: [], II: [], III: [], IV: [], V: [], VI: [], VII: [], VIII: [], IX: [], X: [], XI: [], XII: [],
-}
+import { useFOFContext } from "../context/context";
+
+// const initialClassmates = {
+//     LKG: [], UKG: [], I: [], II: [], III: [], IV: [], V: [], VI: [], VII: [], VIII: [], IX: [], X: [], XI: [], XII: [],
+// }
 
 const Home = () => {
 
-    const [userInfo, setUserInfo] = useState({});
-    const [classmates, setClassmates] = useState(initialClassmates);
-    const [loading, setLoading] = useState(true);
-
-    async function fetchHomePage() {
-        const url = 'http://localhost:4000/user/userInformation';
-
-        await axios.get(url, { withCredentials: true })
-            .then(res => {
-                console.log("Response (Home Page)", res.data);
-                if (res.data.userInfo) {
-                    setLoading(false);
-                    setUserInfo(res.data.userInfo);
-
-                    //Fetch all the classmates of Every class from LKG to XII
-                    fetchAllClasses(res.data.userInfo.schoolDetails);
-                }
-            })
-            .catch(err => {
-                console.log("Error! Fetching Home Page!\n", err.message);
-            });
-    }
+    const { isHomePageLoaded, setIsHomePageLoaded, userInfo, setUserInfo, classmates, setClassmates } = useFOFContext();
 
     //Fetch all the classmates of One class
     async function searchFriends(searchInfo) {
@@ -43,7 +24,7 @@ const Home = () => {
             return result.data.friends;
         }
         catch (err) {
-            console.log("Error!!! Fetching (SearchFriends Page): \n", err);
+            console.log("Error! Fetching (SearchFriends Page): \n", err);
             return [];
         }
     }
@@ -64,16 +45,38 @@ const Home = () => {
                     return { ...prev, [key]: data }
                 });
             }
-
         });
 
+        //Home Page is loaded Completely
+        setIsHomePageLoaded(true);
+    }
+
+
+    async function fetchHomePage() {
+        const url = 'http://localhost:4000/user/userInformation';
+
+        await axios.get(url, { withCredentials: true })
+            .then(res => {
+                console.log("Response (Home Page)", res.data);
+                if (res.data.userInfo) {
+                    //Fetch the user information
+                    setUserInfo(res.data.userInfo);
+                    //Fetch all the classmates of Every class from LKG to XII
+                    fetchAllClasses(res.data.userInfo.schoolDetails);
+                }
+            })
+            .catch(err => {
+                console.log("Error! Fetching Home Page!\n", err.message);
+            });
     }
 
     useEffect(() => {
-        fetchHomePage();
+        if (!isHomePageLoaded) {
+            fetchHomePage();
+        }
     }, []);
 
-    if (!loading) {
+    if (isHomePageLoaded) {
         return (
 
             <>
@@ -95,9 +98,7 @@ const Home = () => {
 
 
                 {/*-----------Classmates and Classes------------*/}
-
                 {
-
                     Object.keys(classmates).map((key, index) => {
 
                         // console.log("Key: index: ",key,index);
@@ -119,7 +120,6 @@ const Home = () => {
                             </div>
                         )
                     })
-
                 }
             </>
         )
