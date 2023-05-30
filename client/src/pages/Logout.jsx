@@ -1,11 +1,11 @@
-import React from 'react'
+import { useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useFOFContext } from "../context/context";
 
 const Logout = () => {
 
-    const { isLoggedIn, setIsLoggedIn } = useFOFContext();
+    const { setIsLoggedIn } = useFOFContext();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -23,11 +23,9 @@ const Logout = () => {
             });
     }
 
-    return (
-        <div>
-            <button onClick={handleLogout}> Click to Logout! </button>
-        </div>
-    )
+    useEffect(() => {
+        handleLogout();
+    });
 }
 
 export default Logout;
