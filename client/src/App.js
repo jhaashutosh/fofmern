@@ -49,7 +49,7 @@ function App() {
             <BrowserRouter>
 
                 {/*-- Temporary Navbar -- */}
-                {/* <nav style={{ backgroundColor: "yellow" }}>
+                <nav style={{ backgroundColor: "yellow" }}>
                     <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
@@ -62,7 +62,7 @@ function App() {
                     <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
                     <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
-                </nav> */}
+                </nav>
 
                 {/*-- Navbar -- */}
                 {isLoggedIn && <Navbar />}
@@ -72,7 +72,7 @@ function App() {
 
                     {/* Protected Routes -> isLoggedIn => true */}
                     <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-                    <Route path="/allDetails" element={isLoggedIn ? <AllDetails /> : <Navigate to='/login' />} />
+                    <Route path="/allDetails" element={<AllDetails />} />
                     <Route path="/editAllDetails" element={isLoggedIn ? <EditAllDetails /> : <Navigate to='/login' />} />
                     <Route path="/searchFriends" element={isLoggedIn ? <SearchFriends /> : <Navigate to='/login' />} />
 
@@ -81,12 +81,13 @@ function App() {
                     <Route path="/signup" element={isLoggedIn ? <Navigate to='/' /> : <Signup />} />
                     <Route path="/login" element={isLoggedIn ? <Navigate to='/' /> : <Login />} />
                     <Route path="/forgotPassword" element={isLoggedIn ? <Navigate to='/' /> : <ForgotPassword />} />
-                    <Route path="/sendVerificationMail/:userId" element={isLoggedIn ? <Navigate to='/' /> : <VerifyEmail />} />
                     <Route path="/checkValidEmailURL/:token" element={isLoggedIn ? <Navigate to='/' /> : <CheckValidEmailURL />} />
                     <Route path="/setNewPassword/:token" element={isLoggedIn ? <Navigate to='/' /> : <SetNewPassword />} />
+                    <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />}/>
                     <Route path="/logout" element={<Logout />} />
 
                 </Routes>
+
             </BrowserRouter>
         </div>
     );

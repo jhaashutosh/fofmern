@@ -30,8 +30,7 @@ const Login = () => {
                 }
                 else if (redirect) {
 
-                    //Set isLoggedin to true!
-                    setIsLoggedIn(true);
+                    if (redirect === '/' || redirect === '/allDetails') setIsLoggedIn(true);
 
                     //Redirecting to Home Page!
                     navigate(redirect);
