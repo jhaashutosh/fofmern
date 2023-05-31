@@ -33,7 +33,7 @@ const SetNewPassword = () => {
 
         else if (confirmPassword === '') setPasswordError("😑 Please Enter Confirm Password!");
 
-        else if (password.length < 3) setPasswordError("😐 Password must be 2 Character Long!");
+        else if (password.length <= 3) setPasswordError("😐 Password must be 3 Character Long!");
 
         else if (password !== confirmPassword) setPasswordError("🙄 Confirm Password do not match!")
 
@@ -133,9 +133,6 @@ const SetNewPassword = () => {
             </div>
         )
     }
-
-
-
 
 }
 

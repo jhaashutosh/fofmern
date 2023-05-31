@@ -395,7 +395,7 @@ exports.checkIfUserIsLoggedInController = async (req, res) => {
 		console.log("🔑 Decoded JWT Token: ", decodedToken);
 	}
 	catch (err) {
-		console.log("Error Decoding JWT Token!", err);
+		console.log("Error Decoding JWT Token! => User is not Logged In!");
 	}
 
 	//Sending Response
