@@ -83,7 +83,7 @@ function App() {
                     <Route path="/forgotPassword" element={isLoggedIn ? <Navigate to='/' /> : <ForgotPassword />} />
                     <Route path="/checkValidEmailURL/:token" element={isLoggedIn ? <Navigate to='/' /> : <CheckValidEmailURL />} />
                     <Route path="/setNewPassword/:token" element={isLoggedIn ? <Navigate to='/' /> : <SetNewPassword />} />
-                    <Route path="/sendVerificationMail/:userId" element={<VerifyEmail />}/>
+                    <Route path="/sendVerificationMail/:userId" element={isLoggedIn ? <Navigate to='/' /> : <VerifyEmail />} />
                     <Route path="/logout" element={<Logout />} />
 
                 </Routes>
