@@ -18,6 +18,7 @@ export const FOFContextProvider = ({ children }) => {
     const [isHomePageLoaded, setIsHomePageLoaded] = useState(false);
     const [userInfo, setUserInfo] = useState({});
     const [classmates, setClassmates] = useState(initialClassmates);
+    const [currentPath, setCurrentPath] = useState("");
 
     const values = {
         // state --------------
@@ -25,6 +26,7 @@ export const FOFContextProvider = ({ children }) => {
         isHomePageLoaded, setIsHomePageLoaded,
         userInfo, setUserInfo,
         classmates, setClassmates,
+        currentPath, setCurrentPath,
 
         // functions-----------
     }

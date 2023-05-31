@@ -1,0 +1,78 @@
+footer{
+    background-color: #202935;
+    width: 100%;
+}
+
+.div1{
+    padding: 20px 0;
+    width: 100%;
+    display: flex;
+
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.stats_card{
+    text-align: center;
+    padding: 30px 50px;
+}
+
+.stats_card i{
+    font-size: 50px;
+}
+
+.stats_card h1{
+    font-size: 40px;
+    color: #F4C226;
+    margin: 8px;
+}
+
+.stats_card p{
+    margin: 0;
+}
+
+
+.div2{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.follow_contact_us{
+    align-self: flex-start;
+    width: 380px;
+    padding: 20px; 
+}
+
+.follow_contact_us h1{
+    color: white;
+    margin: 20px 0px;
+}
+
+.follow_contact_us p{
+    color: white;
+    opacity: 0.5;
+    margin: 8px 0px;
+}
+
+.follow_contact_us i{
+    font-size: 30px;
+    padding: 0 15px 0 0;
+    color: #7cf341;
+}
+
+.follow_contact_us a{
+    text-decoration: none;
+    color: white;
+}
+
+.hrline{
+    border: none;
+    margin: 0px 50px;
+    background-color:#acaaa998;
+    height:1px;
+}

@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navigate, NavLink } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { Navigate, NavLink, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -22,7 +23,11 @@ import { useEffect } from "react";
 
 function App() {
 
-    const { isLoggedIn, setIsLoggedIn } = useFOFContext();
+    //Current Path -> Changing.
+    const location = useLocation();
+
+    //Context
+    const { currentPath, setCurrentPath, isLoggedIn, setIsLoggedIn } = useFOFContext();
 
     //Check If User is Logged In or Not
     function checkIfUserIsLoggedIn() {
@@ -38,57 +43,63 @@ function App() {
             .catch(err => console.log("Error in checkIfUserIsLoggedIn: ", err));
     }
 
+    //Check If User is Logged In or Not!
     useEffect(() => {
         checkIfUserIsLoggedIn();
     }, []);
 
 
+    //Set Current Path and Print it!
+    useEffect(() => {
+        setCurrentPath(location.pathname);
+        console.log("Current Path: ", location.pathname);
+    }, [location.pathname]);
+
+
     return (
         <div className="App">
 
-            <BrowserRouter>
+            {/*-- Temporary Navbar -- */}
+            <nav style={{ backgroundColor: "yellow" }}>
+                <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/allDetails"> AllDetails </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/editAllDetails"> EditAllDetails </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/searchFriends"> SearchFriends </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/sendVerificationMail/enterUserId"> VerifyEmail </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> CheckValidEmailURL </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/forgotPassword"> Forgot Password </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
+                <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
+            </nav>
 
-                {/*-- Temporary Navbar -- */}
-                <nav style={{ backgroundColor: "yellow" }}>
-                    <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/allDetails"> AllDetails </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/editAllDetails"> EditAllDetails </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/searchFriends"> SearchFriends </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/sendVerificationMail/enterUserId"> VerifyEmail </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> CheckValidEmailURL </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/forgotPassword"> Forgot Password </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
-                    <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
-                </nav>
+            {/*-- Navbar -- */}
+            {isLoggedIn && <Navbar />}
 
-                {/*-- Navbar -- */}
-                {isLoggedIn && <Navbar />}
+            {/*------- All Routes -------- */}
+            <Routes>
 
-                {/*------- All Routes -------- */}
-                <Routes>
+                {/* Protected Routes -> isLoggedIn => true */}
+                <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+                <Route path="/allDetails" element={<AllDetails />} />
+                <Route path="/editAllDetails" element={isLoggedIn ? <EditAllDetails /> : <Navigate to='/login' />} />
+                <Route path="/searchFriends" element={isLoggedIn ? <SearchFriends /> : <Navigate to='/login' />} />
 
-                    {/* Protected Routes -> isLoggedIn => true */}
-                    <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-                    <Route path="/allDetails" element={<AllDetails />} />
-                    <Route path="/editAllDetails" element={isLoggedIn ? <EditAllDetails /> : <Navigate to='/login' />} />
-                    <Route path="/searchFriends" element={isLoggedIn ? <SearchFriends /> : <Navigate to='/login' />} />
+                {/* Normal Routes -> isLoggedIn => false */}
+                <Route path="*" element={<Error404 />} />
+                <Route path="/signup" element={isLoggedIn ? <Navigate to='/' /> : <Signup />} />
+                <Route path="/login" element={isLoggedIn ? <Navigate to='/' /> : <Login />} />
+                <Route path="/forgotPassword" element={isLoggedIn ? <Navigate to='/' /> : <ForgotPassword />} />
+                <Route path="/checkValidEmailURL/:token" element={isLoggedIn ? <Navigate to='/' /> : <CheckValidEmailURL />} />
+                <Route path="/setNewPassword/:token" element={isLoggedIn ? <Navigate to='/' /> : <SetNewPassword />} />
+                <Route path="/sendVerificationMail/:userId" element={isLoggedIn ? <Navigate to='/' /> : <VerifyEmail />} />
+                <Route path="/logout" element={<Logout />} />
 
-                    {/* Normal Routes -> isLoggedIn => false */}
-                    <Route path="*" element={<Error404 />} />
-                    <Route path="/signup" element={isLoggedIn ? <Navigate to='/' /> : <Signup />} />
-                    <Route path="/login" element={isLoggedIn ? <Navigate to='/' /> : <Login />} />
-                    <Route path="/forgotPassword" element={isLoggedIn ? <Navigate to='/' /> : <ForgotPassword />} />
-                    <Route path="/checkValidEmailURL/:token" element={isLoggedIn ? <Navigate to='/' /> : <CheckValidEmailURL />} />
-                    <Route path="/setNewPassword/:token" element={isLoggedIn ? <Navigate to='/' /> : <SetNewPassword />} />
-                    <Route path="/sendVerificationMail/:userId" element={isLoggedIn ? <Navigate to='/' /> : <VerifyEmail />} />
-                    <Route path="/logout" element={<Logout />} />
+            </Routes>
 
-                </Routes>
-
-            </BrowserRouter>
+            <Footer />
         </div>
     );
 }
