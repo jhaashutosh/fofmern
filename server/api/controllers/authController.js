@@ -5,6 +5,7 @@ const validator = require("validator");
 //Models
 const SignUpDetails = require("../models/SignUpDetails");
 const AllDetails = require("../models/AllDetails");
+const WebsiteDetails = require("../models/WebsiteDetails");
 
 //Functions
 const { createPasscode } = require("../utility/jwtPasscode");
@@ -85,33 +86,32 @@ exports.checkValidEmailURL = async (req, res) => {
 };
 
 //Signup Route -> POST Method  --> /auth/signup
-exports.signupController = (req, res) => {
+exports.signupController = async (req, res) => {
 
 	console.log("📑 Sign Up Form Data (After Validation): \n", req.data);
 	const { username, email, password } = req.data;
 	const numberOfTries = 1;
 
 	//Saving Data to Database SignUpDetails Model
-	const signup_details = new SignUpDetails({
-		username,
-		email,
-		password,
-		numberOfTries,
-	});
+	const signup_details = new SignUpDetails({ username, email, password, numberOfTries });
+
+	//Increasing Total Users Count
+	try {
+		const updatedWebsiteDetails = await WebsiteDetails.updateOne({}, { $inc: { totalUsers: 1 } });
+		console.log("🙋‍♂️Total Users Count Updated Successfully! \n", updatedWebsiteDetails);
+	}
+	catch (err) { console.log("😥 Error in Updating Total Users Count! \n", err) }
 
 	signup_details
 		.save()
-		.then((data) => {
-			// Sending Verification Mail:
-			// sendVerifyMail(data.username, data.email, data._id);
-
+		.then(async (data) => {
 			console.log("✅ SignUp Details Saved to Database Successfully! \n", data);
 			res.status(200).json({ message: "✅ SignUp Details Saved to Database Successfully!" });
 		})
 
 		.catch((err) => {
 			console.log("😥 Error in Saving Sign Up Form Data to Database: \n", err);
-			res.status(500).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
+			res.status(200).json({ message: "😥 Error in Saving Sign Up Form Data to Database!" });
 		});
 };
 
@@ -402,4 +402,42 @@ exports.checkIfUserIsLoggedInController = async (req, res) => {
 	if (decodedToken) return res.status(200).send({ isLoggedIn: true });
 	else return res.status(200).send({ isLoggedIn: false });
 
+}
+
+
+//Increase Visitor Route -> GET Method  --> /auth/websiteDetails
+exports.websiteDetailsController = async (req, res) => {
+
+	//If Visitor Count is not present in Database -> Create it!
+	const totalDetails = await WebsiteDetails.find();
+
+	if (totalDetails.length === 0) {
+		//Saving Data to Database WebsiteDetails Model
+		const website_details = new WebsiteDetails({ totalVisitors: 1 });
+
+		website_details
+			.save()
+			.then((data) => {
+				console.log("✅ Website Details Created! \n", data);
+			})
+			.catch((err) => {
+				console.log("😥 Error in Saving Website Details! \n", err);
+			});
+	}
+
+	else {
+
+		//Updating Visitor Count
+		const updatedWebsiteDetails = await WebsiteDetails.updateOne(
+			{},
+			{ $inc: { totalVisitors: 1 } }
+		);
+	}
+
+	//Fetching Updated Visitor Count
+	const updatedWebsiteDetails = await WebsiteDetails.find();
+	console.log("📑 Website Details: \n", updatedWebsiteDetails[0]);
+
+	//Sending Response
+	return res.status(200).send({ websiteDetails: updatedWebsiteDetails[0] });
 }

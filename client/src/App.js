@@ -29,6 +29,7 @@ function App() {
 
     //Context
     const { currentPath, setCurrentPath, isLoggedIn, setIsLoggedIn } = useFOFContext();
+    const [websiteData, setWebsiteData] = useState({});
     // const [isLoading, setIsLoading] = useState(true);
 
     //Check If User is Logged In or Not
@@ -46,9 +47,21 @@ function App() {
             .catch(err => console.log("Error in checkIfUserIsLoggedIn: ", err));
     }
 
+    //Increase Visitor
+    function increaseVisitor() {
+        const url = "http://localhost:4000/auth/websiteDetails";
+        axios.get(url)
+            .then(res => {
+                console.log("Response in increaseVisitor: ", res.data);
+                setWebsiteData(res.data.websiteDetails);
+            })
+            .catch(err => console.log("Error in increaseVisitor: ", err));
+    }
+
     //Check If User is Logged In or Not!
     useEffect(() => {
         checkIfUserIsLoggedIn();
+        increaseVisitor();
     }, []);
 
 
@@ -103,7 +116,8 @@ function App() {
 
             </Routes>
 
-            <Footer />
+            <Footer websiteData={websiteData} />
+
         </div>
     );
 

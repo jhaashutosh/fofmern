@@ -11,10 +11,13 @@ const {
   sendVerificationMailController,
   checkResetPasswordTokenController,
   checkIfUserIsLoggedInController,
+  websiteDetailsController,
 } = require("../controllers/authController");
 
 const { signupValidator } = require("../middlewares/signupValidator");
 const { loginValidator } = require("../middlewares/loginValidator");
+
+router.get("/websiteDetails", websiteDetailsController);
 
 router.get("/checkIfUserIsLoggedIn", checkIfUserIsLoggedInController);
 

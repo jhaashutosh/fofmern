@@ -1,8 +1,11 @@
 import style from './footer.module.css';
+import { useEffect } from "react";
+import axios from 'axios';
 
 import { useFOFContext } from "../context/context";
 
-const Footer = () => {
+
+const Footer = ({websiteData}) => {
 
     const { currentPath } = useFOFContext();
     const validPaths = ['/', '/login', '/signup', '/allDetails', '/editAllDetails', 'searchFriends'];
@@ -16,19 +19,19 @@ const Footer = () => {
                 <div className={style.div1}>
                     <div className={style.stats_card}>
                         <i className="fa-solid fa-user-large"></i>
-                        <h1>525120+</h1>
+                        <h1>{websiteData.totalVisitors}+</h1>
                         <p>Total Visitors</p>
                     </div>
 
                     <div className={style.stats_card}>
                         <i className="fa-solid fa-users"></i>
-                        <h1>6252+</h1>
+                        <h1>{websiteData.totalUsers}+</h1>
                         <p>Registered Users</p>
                     </div>
 
                     <div className={style.stats_card}>
                         <i className="fa-solid fa-hand-holding-dollar"></i>
-                        <h1>16+</h1>
+                        <h1>{websiteData.donationAmount}+</h1>
                         <p>Donation Amount($)</p>
                     </div>
                 </div>
