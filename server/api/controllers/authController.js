@@ -8,66 +8,72 @@ const AllDetails = require("../models/AllDetails");
 const WebsiteDetails = require("../models/WebsiteDetails");
 
 //Functions
-const { createPasscode } = require("../utility/jwtPasscode");
 const { sendMail } = require("../utility/sendMail");
 
-//What is the use of this Function resendVerifyMail? --------------------->
-exports.resendVerifyMail = async (req, res) => {
-	const { username, email, password } = req.body;
-	try {
-		const user = await SignUpDetails.findOne({ email });
-		if (!user || user == undefined) {
-			res.status(400).json({
-				message: "user not found",
-			});
-		}
-		const confirmation = await sendVerifyMail(
-			user.username,
-			user.email,
-			user._id
-		);
-		if (confirmation === false) {
-			res.status(500).json({
-				error: "mail server not working",
-			});
-		}
-		res.status(200).json({
-			message: "✅Mail has been sent!",
-		});
-	} catch (err) {
-		console.log(err);
+const { createJWT } = require("../utility/createJWT");
+
+
+//SendVerificationMail Route -> GET Method  --> /auth/sendVerificationMail/:id
+exports.sendVerificationMailController = async (req, res) => {
+
+	const userId = req.params.id;
+	console.log("🔑 User ID: (SendVerificationMail) ", userId);
+
+	//Checking if User is Present in Database
+	const user = await SignUpDetails.findById(userId);
+
+	if (!user) {
+		return res.status(200).json({ message: "⚠ Error! Incorrect user ID!" });
 	}
-};
+	else {
+		if (user.isverified) res.status(200).json({ message: "✅ Email already Verified! (Go to Login Page)" });
 
+		else {
 
-//Send Verification Mail -> GET Method  --> /auth/sendVerificationMail/:id
-const sendVerifyMail = async (name, email, user_id) => {
-	const userToken = createPasscode("50m", { user_id: user_id, email: email });
-	console.log("🔑Email Verification Token: ", userToken);
+			//Creating Token
+			const userToken = createJWT({ user_id: user._id }, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN);
+			console.log("🔑Email Verification Token: ", userToken);
 
-	const userDetails = await SignUpDetails.findById(user_id);
-	if (!userDetails) {
-		return res.status(404).json({ error: "User not found" });
+			//Sending Verification Mail
+			const userName = user.username;
+			const fullURL = process.env.VERIFY_URL + userToken;
+
+			const subject = "Verification mail from FOF";
+
+			const HTMLString = `
+
+				<div style="max-width: 430px; border-top: 4px solid #16d71c; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; background-color: white; padding: 30px 20px; border-radius: 5px; text-align: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+
+					<h1 style="font-size: 20px; text-decoration: underline; font-weight: bolder; font-family: Arial, Helvetica, sans-serif; color: #42AD39;">FOF - Find Old Friend</h1>
+					
+					<h3>Verify your email address</h3>
+
+					<p style="font-size: 15px; color: #666; margin-bottom: 40px; font-weight: 400;"> 👋Hello <strong style="color:black">${userName}</strong>, Please confirm that you want to use this as your FOF account email address. Once it's done you will be able to start search your friends.</p>
+
+					<a style="text-decoration: none; background-color: #42AD39; font-weight: 600; color: white; border-radius: 5px; padding: 12px 80px; font-size: 14px;" href="${fullURL}">Verify Email</a>
+
+					<br><br>
+
+				</div>
+			`
+
+			const confirmation = await sendMail(user.email, subject, HTMLString);
+
+			if (confirmation === false) {
+				return res.status(200).json({ message: "⚠ Error! Mail server not working!" });
+			}
+			else {
+				return res.status(200).json({ message: "🥳📩 Mail Sent Successfully!" });
+			}
+		}
 	}
-
-	const updatedNumberOfTries = userDetails.numberOfTries + 1;
-
-	const updatedVerify = await SignUpDetails.updateOne(
-		{ _id: user_id },
-		{ $set: { numberOfTries: updatedNumberOfTries } }
-	);
-
-	let subject = "Verification mail from FOF";
-	let HTML_STRING = `<p> Hello ${name},<br>This mail is for verification, click here to verify: <br> <a href=${process.env.VERIFY_URL + userToken}>VERIFY</a></p>`;
-
-	return (confirmation = sendMail(email, subject, HTML_STRING));
 };
 
 //VerifyMail Route -> GET Method  --> /auth/checkValidEmailURL/:token
 exports.checkValidEmailURL = async (req, res) => {
 	const userToken = req.params.id;
 	try {
-		const userData = jwt.verify(userToken, process.env.JWT_SECRET).payload[0];
+		const userData = await jwt.verify(userToken, process.env.JWT_SECRET);
 		const userId = userData.user_id;
 
 		console.log("ValidEmailURL Token: ", userData);
@@ -115,33 +121,6 @@ exports.signupController = async (req, res) => {
 		});
 };
 
-//SendVerificationMail Route -> GET Method  --> /auth/sendVerificationMail/:id
-exports.sendVerificationMailController = async (req, res) => {
-	const id = req.params.id;
-	console.log("🔑 User ID: ", id);
-
-	let user;
-	try {
-		user = await SignUpDetails.findById(id);
-	} catch (err) {
-		return res.status(200).json({ message: "⚠ Error! Incorrect user ID!" });
-	}
-
-	if (user.isverified) {
-		return res.status(200).json({ message: "✅ Email already Verified! (Go to Login Page)" });
-	}
-	else {
-		//Sending Verification Mail
-		const confirmation = await sendVerifyMail(user.username, user.email, user._id);
-		if (confirmation === false) {
-			return res.status(200).json({ message: "⚠ Error! Mail server not working!" });
-		}
-		else {
-			return res.status(200).json({ message: "🥳📩 Mail Sent Successfully!" });
-		}
-	}
-};
-
 //Login Route -> POST Method  --> /auth/login
 exports.loginController = async (req, res) => {
 
@@ -163,20 +142,13 @@ exports.loginController = async (req, res) => {
 			if (user.isverified) {
 
 				//Create JWT Token
-				let token;
+				const token = createJWT({ id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN);
+				console.log("🔑 JWT Token Created! (Login):", token);
 
-				try {
-					token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-					console.log("JWT Token created Successfully!: ", token);
+				//Creating Cookie
+				res.cookie("jwtToken", token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3 * (60 * 60 * 24) * 1000 });
+				console.log("JWT Cookie created Successfully in Browser!");
 
-					//Creating Cookie
-					res.cookie("jwtToken", token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 3 * (60 * 60 * 24) * 1000 });
-					// console.log("JWT Cookie created Successfully in Browser!");
-
-				} catch (err) {
-					console.log("Error Creating JWT! Token (Login) \n", err);
-					return res.status(500).send({ loginMessage: "Error Creating JWT! Token (Login)" });
-				}
 
 				//Checking if the User is Registered or not
 				if (user.isregistered) {
@@ -233,26 +205,45 @@ exports.forgotPasswordController = async (req, res) => {
 
 	//Handling False Values: Null, Undefined, Empty String, 0, -1, False, NaN
 	if (!email) email = "";
+
+	//Validating Email!
 	if (email === "") {
 		errorMessage = "😐 Email is required!";
-	} else if (!validator.isEmail(email)) {
+	}
+	else if (!validator.isEmail(email)) {
 		errorMessage = "❌📧 Invalid Email ID!";
-	} else {
+	}
+	else {
 		//Checking if Email is present in Database. -> SignUpDetails Model
 		const user = await SignUpDetails.findOne({ email });
 
 		if (user) {
 			//Sending Reset Password Mail-------------------->
-
-			//Creating Token
-			const userToken = jwt.sign({ id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+			const userToken = createJWT({ id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN);
 			console.log("🔑Forgot Password Token: ", userToken);
 
-			let subject = "FOF - Reset Password! ";
-			let HTML_STRING = `<p> Hello ${user.username} !,<br>This is your reset password mail!, Click here to reset your password: <br> <a href=${process.env.FORGOT_PASS_URL + userToken}>VERIFY</a></p>`;
+			const subject = "FOF (Find Old Friend) - Reset Password! ";
+			const forgotPasswordURL = process.env.FORGOT_PASS_URL + userToken;
 
-			const confirmation = await sendMail(email, subject, HTML_STRING);
-			console.log("📧 Mail Sent: ", confirmation);
+			const HTMLString = `
+				<div style=" max-width:400px; background-color: white;  padding: 30px 20px; border-top: 4px solid #00B3E3; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; border-radius: 5px; box-shadow: 0px 2px 2px 1px rgba(0, 0, 0, 0.2); text-align: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+					
+					<h1 style="font-size: 20px; text-decoration: underline; font-weight: bolder; font-family: Arial, Helvetica, sans-serif; color: #0084e3;">FOF - Find Old Friend</h1>
+					<h3>Password Reset</h3>
+			
+					<p style="font-size: 15px; color: #666; margin-bottom: 40px; font-weight: 500;"> If you have lost your password or wish to reset it, use the link below to get started.</p>
+			
+					<a style="text-decoration: none; background-color: #0090e3; font-weight: 600; color: white; border-radius: 5px; padding: 12px 80px; font-size: 14px;" href=${forgotPasswordURL}>Reset Your Password</a>
+			
+					<br><br>
+			
+					<p style="font-size: 12px; color: #666;">Note: If you did not request a password reset, you can safely ignore this email. Only a person with access to your email can reset your account password. </p>
+			
+				</div>
+			`
+
+			const confirmation = await sendMail(email, subject, HTMLString);
+
 			if (!confirmation) {
 				errorMessage = "😢📤 Error! Mail server not working! (Mail not Sent)";
 			}
