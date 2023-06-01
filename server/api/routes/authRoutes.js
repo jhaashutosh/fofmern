@@ -14,8 +14,10 @@ const {
   websiteDetailsController,
 } = require("../controllers/authController");
 
-const { signupValidator } = require("../middlewares/signupValidator");
-const { loginValidator } = require("../middlewares/loginValidator");
+const {
+  signupValidator,
+  loginValidator,
+} = require("../middlewares/allValidators");
 
 router.get("/websiteDetails", websiteDetailsController);
 
