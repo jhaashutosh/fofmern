@@ -55,10 +55,7 @@ signup_details_schema.pre("save", async function (next) {
   next();
 });
 
-const signup_details_model = mongoose.model(
-  "signup_details",
-  signup_details_schema
-);
+const signup_details_model = mongoose.model("signup_details", signup_details_schema);
 
 //Exporting User Model
 module.exports = signup_details_model;
