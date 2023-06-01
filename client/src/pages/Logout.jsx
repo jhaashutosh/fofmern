@@ -5,7 +5,7 @@ import { useFOFContext } from "../context/context";
 
 const Logout = () => {
 
-    const { setIsLoggedIn } = useFOFContext();
+    const { setIsLoggedIn, setIsHomePageLoaded} = useFOFContext();
     const navigate = useNavigate();
 
     const handleLogout = () => {

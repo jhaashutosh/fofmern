@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Navigate, NavLink, useLocation } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
 
 import Navbar from "./components/Navbar";
@@ -28,6 +29,7 @@ function App() {
 
     //Context
     const { currentPath, setCurrentPath, isLoggedIn, setIsLoggedIn } = useFOFContext();
+    // const [isLoading, setIsLoading] = useState(true);
 
     //Check If User is Logged In or Not
     function checkIfUserIsLoggedIn() {
@@ -37,7 +39,8 @@ function App() {
             .then(res => {
                 console.log("Response in checkIfUserIsLoggedIn: ", res.data);
                 if (res.data.isLoggedIn) {
-                    setIsLoggedIn(true);
+                    setIsLoggedIn(res.data.isLoggedIn);
+                    // setIsLoading(false);
                 }
             })
             .catch(err => console.log("Error in checkIfUserIsLoggedIn: ", err));
@@ -55,25 +58,26 @@ function App() {
         console.log("Current Path: ", location.pathname);
     }, [location.pathname]);
 
+    // if (Loading) {
 
     return (
         <div className="App">
 
             {/*-- Temporary Navbar -- */}
-            <nav style={{ backgroundColor: "yellow" }}>
-                <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/allDetails"> AllDetails </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/editAllDetails"> EditAllDetails </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/searchFriends"> SearchFriends </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/sendVerificationMail/enterUserId"> VerifyEmail </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> CheckValidEmailURL </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/forgotPassword"> Forgot Password </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
-                <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
-            </nav>
+            {/* <nav style={{ backgroundColor: "yellow" }}>
+                    <NavLink style={{ marginRight: "20px" }} to="/"> Home </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/login"> Login </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/signup"> Signup </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/allDetails"> AllDetails </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/editAllDetails"> EditAllDetails </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/searchFriends"> SearchFriends </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/sendVerificationMail/enterUserId"> VerifyEmail </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/checkValidEmailURL/randomtokenxyz123"> CheckValidEmailURL </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/forgotPassword"> Forgot Password </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/setNewPassword/randomToken9xyz31aex"> SetNewPassword </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/404"> 404 </NavLink>
+                    <NavLink style={{ marginRight: "20px" }} to="/logout"> Logout </NavLink>
+                </nav> */}
 
             {/*-- Navbar -- */}
             {isLoggedIn && <Navbar />}
@@ -102,6 +106,17 @@ function App() {
             <Footer />
         </div>
     );
+
+    // }
+
+    // else {
+    //     return (
+    //         <div className="App">
+    //             <h1>Loading...</h1>
+    //         </div>
+    //     );
+    // }
+
 }
 
 export default App;

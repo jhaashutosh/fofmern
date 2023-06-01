@@ -133,20 +133,51 @@ exports.searchFriendsController = async (req, res) => {
 
 };
 
-//User Information Route -> GET Method  --> /user/userInformation
-exports.userInformationController = async (req, res) => {
+//Home Route -> GET Method  --> /user/home
+exports.homeController = async (req, res) => {
 	const username = req.user.username;
-	console.log("🙋Username: ", username);
 
-	let userInfo;
-	//Fetching User Information from Database
+	let userInfo, schoolDetails;
+
+	//Fetching All Details from Database
 	try {
 		userInfo = await allDetails.findOne({ username: username });
-		// console.log("👤 User Information: \n", userInfo);
-		return res.status(200).json({ "userInfo": userInfo });
+		schoolDetails = userInfo.schoolDetails;
+		// console.log("👤 User Information: (/home page): \n", userInfo);
 	}
 	catch (err) {
-		console.log("😥 Error in Fetching User Information from Database: \n", err);
-		return res.status(500).json({ message: "😥 Error in Fetching User Information from Database!" });
+		console.log("😥 Error fetching /home page in Backend! \n", err);
+		return res.status(200).json({ message: "😥 Error fetching /home page in Backend" });
 	}
+
+	// Fetching Friends of Every Class from Database
+	let allClassesFriends = {
+		LKG: [], UKG: [], I: [], II: [], III: [], IV: [], V: [], VI: [], VII: [], VIII: [], IX: [], X: [], XI: [], XII: [],
+	}
+
+	for (let className in allClassesFriends) {
+		const hashString = schoolDetails[className];
+		let friends = [];
+		if (validateHashString(hashString)) {
+			//Searching Friends in Database
+			try {
+				friends = await allDetails.find({
+					[`schoolDetails.${className}`]: hashString,
+					username: { $ne: req.user.username },
+				});
+			}
+			catch (err) {
+				console.log("😥 Error! Fetching /home page (All Classes Friends) \n", err);
+				return res.status(200).json({ message: "😥 Error! Fetching /home page (All Classes Friends)" });
+			}
+		}
+
+		allClassesFriends[className] = friends;
+		// console.log("Friends Found: \n", friends);
+	}
+
+	// console.log("👫 All Classes Friends: \n", allClassesFriends);
+	return res.status(200).json({ userInfo, allClassesFriends });
 }
+
+
