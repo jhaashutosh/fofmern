@@ -4,8 +4,10 @@ import axios from 'axios';
 import style from '../styles/allDetails.module.css';
 
 const initialValues = {
-    imageURL: '',
+    profileImg: '',
+    backgroundImg: '',
     instagram: '',
+    bio: '',
     fullName: '',
     gender: '',
     state: '',
@@ -28,13 +30,35 @@ const initialValues = {
 };
 
 const AllDetails = () => {
+    
+    const navigate = useNavigate();
 
     //Form Values
     const [form, setForm] = useState(initialValues);
     //Profile Picture
-    const [image, setImage] = useState('https://i.ibb.co/Zd5rxk7/dp.jpg');
+    const [profileImg, setProfileImg] = useState('https://i.ibb.co/Dk6tD8k/user.png');
+    //Background Picture
+    const [backgroundImg, setBackgroundImg] = useState('https://i.ibb.co/2FC82LH/message.jpg');
 
-    const navigate = useNavigate();
+    //Profile Image Changing Function
+    function changeProfileImg(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            setProfileImg(reader.result);
+        }
+    }
+
+    //Background Image Changing Function
+    function changeBackgroundImg(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            setBackgroundImg(reader.result);
+        }
+    }
 
     function registerDetails(data) {
 
@@ -49,12 +73,6 @@ const AllDetails = () => {
             });
     }
 
-    function updateImage(e) {
-        const img = e.target.value;
-        if (img.trim() === '') setImage('https://i.ibb.co/Zd5rxk7/dp.jpg');
-        else setImage(img);
-    }
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
@@ -64,7 +82,9 @@ const AllDetails = () => {
         e.preventDefault();
 
         const allValues = {
-            imageURL: form.imageURL.trim(),
+            profileImg: "profile Image URL",   //Update Later with URL
+            backgroundImg: "background Image URL", //Update Later with URL
+            bio: form.bio.trim(),
             instagram: form.instagram.trim(),
             fullName: form.fullName.trim(),
             gender: form.gender,
@@ -96,7 +116,6 @@ const AllDetails = () => {
     }
 
 
-
     return (
 
         <div className={style.register_page}>
@@ -111,30 +130,23 @@ const AllDetails = () => {
 
                     <fieldset className={style.html_fieldset}>
 
-                        <legend>Profile Picture: </legend>
+                        <legend>Images: </legend>
 
-                        <div className={style.profilepic_div}>
-                            <img className={style.profilepic} src={image} alt="" />
+                        <div className={style.images_div}>
+
+                            <div>
+                                <strong>Profile Image: </strong>
+                                <img className={style.profile_img} src={profileImg} alt="" />
+                                <input onChange={changeProfileImg} type="file" name="profileImg" id="profileImg" />
+                            </div>
+
+                            <div>
+                                <strong>Background Image: </strong>
+                                <img className={style.background_img} src={backgroundImg} alt="" />
+                                <input onChange={changeBackgroundImg} type="file" name="backgroundImg" id="backgroundImg" />
+                            </div>
+
                         </div>
-
-
-                        <table className={style.html_table}>
-
-                            <tbody>
-
-                                <tr>
-                                    <td> <label className={style.labeltext}>Paste DP URL: </label> </td>
-                                    <td> <input className={style.inputfield} type="text" name='imageURL' value={form.imageURL} onChange={(e) => { handleChange(e); updateImage(e) }} /> </td>
-                                </tr>
-
-                                <tr>
-                                    <td> <label className={style.labeltext} htmlFor="">Instagram Username: </label> </td>
-                                    <td> <input className={style.inputfield} type="text" name="instagram" value={form.instagram} onChange={handleChange} /> </td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
 
                     </fieldset>
 
@@ -147,7 +159,7 @@ const AllDetails = () => {
                             <tbody>
 
                                 <tr>
-                                    <td><label className={style.labeltext} htmlFor="">Full Name* :</label></td>
+                                    <td><label className={style.labeltext} htmlFor="">Full Name :</label></td>
                                     <td><input className={style.inputfield} type="text" name="fullName" value={form.fullName} onChange={handleChange} /></td>
                                 </tr>
 
@@ -164,6 +176,16 @@ const AllDetails = () => {
                                         <input type="radio" name="gender" value="other" checked={form.gender === 'other'} onChange={handleChange} />
                                         <label htmlFor="other">Other</label>
                                     </td>
+                                </tr>
+
+                                <tr>
+                                    <td> <label className={style.labeltext} htmlFor="">Instagram Username: </label> </td>
+                                    <td> <input className={style.inputfield} onChange={handleChange} type="text" name="instagram" value={form.instagram} /> </td>
+                                </tr>
+
+                                <tr>
+                                    <td> <label className={style.labeltext} htmlFor="">Enter your Bio:</label> </td>
+                                    <td> <textarea style={{ padding: "7px" }} value={form.bio} name="bio" onChange={handleChange} rows="4" cols="37" maxLength="100" placeholder='Write your bio. . . . . Max (100) characters!' /> </td>
                                 </tr>
 
                                 <tr>

@@ -48,10 +48,10 @@ const Home = () => {
                         <div className={style.background}>
                             <div className={style.profile}>
                                 <div className={style.imagediv}>
-                                    <img src={userInfo.imageURL} alt="" />
+                                    <img src={userInfo.profileImg} alt="" />
                                 </div>
                                 <h1 className={style.heading1}> {userInfo.fullName} ({userInfo.username})</h1>
-                                <h5 className={style.heading5}>There is one Rule! that there is no rule!</h5>
+                                <h5 className={style.heading5}> {userInfo.bio} </h5>
                             </div>
                         </div>
                     </div>

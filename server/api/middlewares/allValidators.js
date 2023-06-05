@@ -158,7 +158,9 @@ exports.allDetailsValidator = async (req, res, next) => {
     /*Input Form Data: -->
       {
           fullName: "",
-          imageURL: "",
+          profileImg: "",
+          backgroundImg: "",
+          bio: "",
           instagram: "",
           bio: "",
           gender: "",
@@ -169,11 +171,12 @@ exports.allDetailsValidator = async (req, res, next) => {
       */
 
     console.log("📑 AllDetails Form Data: \n", req.body);
-    let { fullName, imageURL, instagram, bio, gender, state, city, schoolDetails } = req.body;
+    let { fullName, profileImg, backgroundImg, instagram, bio, gender, state, city, schoolDetails } = req.body;
 
     //Handling all False Value: undefined / null / 0 / -0 / NaN / "" / Converting to String: "undefined" / "null" / "0" / "-0" / "NaN" / ""
     if (!fullName) fullName = "";
-    if (!imageURL) imageURL = "";
+    if (!profileImg) profileImg = "https://i.ibb.co/Dk6tD8k/user.png";
+    if (!backgroundImg) backgroundImg = "https://i.ibb.co/2FC82LH/message.jpg";
     if (!instagram) instagram = "";
     if (!bio) bio = "";
     if (!gender) gender = "other";
@@ -200,7 +203,6 @@ exports.allDetailsValidator = async (req, res, next) => {
 
     //Trimming Values----------------------------------------------------------------------
     fullName = fullName.trim();
-    imageURL = imageURL.trim();
     instagram = instagram.trim();
     bio = bio.trim();
     gender = gender.trim();
@@ -263,7 +265,7 @@ exports.allDetailsValidator = async (req, res, next) => {
     }
     //If no error found, then call next() function
     else {
-        req.data = { fullName, imageURL, instagram, bio, gender, state, city, schoolDetails };
+        req.data = { fullName, profileImg, backgroundImg, instagram, bio, gender, state, city, schoolDetails };
         next();
     }
 };

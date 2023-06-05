@@ -6,7 +6,7 @@ const FriendCard = ({friend}) => {
     return (
         <div className={style.profile_card}>
             <div className={style.imagediv}>
-                <img className={style.profile_img} src={friend.imageURL} alt=""/>
+                <img className={style.profile_img} src={friend.profileImg} alt=""/>
             </div>
 
             <p className={style.name}>  {friend.fullname}  </p> 
