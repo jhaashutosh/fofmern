@@ -14,7 +14,8 @@ const all_details_schema = new schema({
     maxlength: [50, "Name must be less than 50 characters"],
   },
 
-  imageURL: "String",
+  profileImg: "String",
+  backgroundImg: "String",
 
   instagram: "String",
 

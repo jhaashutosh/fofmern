@@ -21,10 +21,10 @@ exports.allDetailsController = async (req, res) => {
 	const username = req.user.username;
 	console.log("🙋Username: ", username);
 
-	const { fullName, imageURL, instagram, bio, gender, state, city, schoolDetails } = req.data;
+	const { fullName, profileImg, backgroundImg, instagram, bio, gender, state, city, schoolDetails } = req.data;
 
 	//Saving All Details to Database
-	const all_details = new allDetails({ username, fullName, imageURL, instagram, bio, gender, state, city, schoolDetails });
+	const all_details = new allDetails({ username, fullName, profileImg, backgroundImg, instagram, bio, gender, state, city, schoolDetails });
 
 	all_details
 		.save()
