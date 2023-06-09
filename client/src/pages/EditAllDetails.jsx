@@ -33,6 +33,9 @@ const EditAllDetails = () => {
 
     const navigate = useNavigate();
 
+    const [profileImageStatus, setProfileImageStatus] = useState('');
+    const [backgroundImageStatus, setBackgroundImageStatus] = useState('');
+
     //Form Values
     const [form, setForm] = useState(initialValues);
     //Profile Picture
@@ -43,21 +46,55 @@ const EditAllDetails = () => {
     //Profile Image Changing Function
     function changeProfileImg(e) {
         const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-            setProfileImg(reader.result);
-        }
+        //Upload File to Azure Blob Storage
+        const formData = new FormData();
+        formData.append('image', file);
+
+        //Uploading Image to Server
+        setProfileImageStatus('Uploading...⏳');
+        
+        const url = "http://localhost:4000/upload/image";
+
+        axios.post(url, formData, { withCredentials: true }, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .then(res => {
+                console.log("Response (EditAllDetails): ", res.data);
+                if (res.data.imageUrl) {
+                    setProfileImg(res.data.imageUrl);
+                    setProfileImageStatus('Uploaded!✅');
+                }
+
+            })
+            .catch(err => {
+                console.log("Error! Uploading Image\n", err);
+                setProfileImageStatus('Error!❌');
+            });
     }
 
     //Background Image Changing Function
     function changeBackgroundImg(e) {
         const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-            setBackgroundImg(reader.result);
-        }
+        //Upload File to Azure Blob Storage
+        const formData = new FormData();
+        formData.append('image', file);
+
+        //Uploading Image to Server
+        setBackgroundImageStatus('Uploading...⏳');
+        
+        const url = "http://localhost:4000/upload/image";
+
+        axios.post(url, formData, { withCredentials: true }, { headers: { 'Content-Type': 'multipart/form-data' } })
+            .then(res => {
+                console.log("Response (EditAllDetails): ", res.data);
+                if (res.data.imageUrl) {
+                    setBackgroundImg(res.data.imageUrl);
+                    setBackgroundImageStatus('Uploaded!✅');
+                }
+
+            })
+            .catch(err => {
+                console.log("Error! Uploading Image\n", err);
+                setBackgroundImageStatus('Error!❌');
+            });
     }
 
     const handleChange = (e) => {
@@ -126,8 +163,8 @@ const EditAllDetails = () => {
         e.preventDefault();
 
         const allValues = {
-            profileImg: "profile Image URL",   //Update Later with URL
-            backgroundImg: "background Image URL", //Update Later with URL
+            profileImg: profileImg,   //Update Later with URL
+            backgroundImg: backgroundImg, //Update Later with URL
             bio: form.bio.trim(),
             instagram: form.instagram.trim(),
             fullName: form.fullName.trim(),
@@ -222,13 +259,17 @@ const EditAllDetails = () => {
                             <div>
                                 <strong>Profile Image: </strong>
                                 <img className={style.profile_img} src={profileImg} alt="" />
-                                <input onChange={changeProfileImg} type="file" name="profileImg" id="profileImg" />
+                                <input style={{maxWidth:"200px"}} onChange={changeProfileImg} type="file" name="profileImg" id="profileImg" />
+                                <br />
+                                <span>{profileImageStatus}</span>
                             </div>
 
                             <div>
                                 <strong>Background Image: </strong>
                                 <img className={style.background_img} src={backgroundImg} alt="" />
-                                <input onChange={changeBackgroundImg} type="file" name="backgroundImg" id="backgroundImg" />
+                                <input style={{maxWidth:"200px"}} onChange={changeBackgroundImg} type="file" name="backgroundImg" id="backgroundImg" />
+                                <br />
+                                <span>{backgroundImageStatus}</span>
                             </div>
 
                         </div>
