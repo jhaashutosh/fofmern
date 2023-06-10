@@ -41,26 +41,55 @@ const Home = () => {
 
         return (
 
-            <>
-                <div className={style.home_page}>
 
-                    <div className={style.main}>
-                        <div className={style.background}>
-                            <div className={style.profile}>
-                                <div className={style.imagediv}>
-                                    <img src={userInfo.profileImg} alt="" />
-                                </div>
-                                <h1 className={style.heading1}> {userInfo.fullName} ({userInfo.username})</h1>
-                                <h5 className={style.heading5}> {userInfo.bio} </h5>
-                            </div>
-                        </div>
+
+            <>
+
+                <div class={style.main_container}>
+
+                <div class={style.profile_container}>
+
+                    <div class={style.bgimg_div}>
+                        <img class={style.bg_img} src={userInfo.backgroundImg} alt=""/>
                     </div>
+
+                    <div class={style.info_div}>
+                        <img class={style.profile_img} src={userInfo.profileImg} alt=""/>
+                        <h1 class={style.full_name}> {userInfo.fullName} </h1>
+                        <p class={style.user_name}> <i class="fa-regular fa-at"></i> {userInfo.username} </p>
+                        <a class={style.user_insta} target="_blank" href={`https://www.instagram.com/${userInfo.instagram}/`}> <i class="fa-brands fa-instagram"></i> {userInfo.instagram} </a>
+                        <p class={style.user_bio}> <i class="fa-regular fa-user"></i> {userInfo.bio} </p>
+                    </div>
+
                 </div>
 
+                {
+                    Object.keys(classmates).map((key, index) => {
+
+                        return(
+                            <div class={style.class_container}>
+                                <div>
+                                    <h1 class={style.class_heading}>Class - {key}</h1>
+                                </div>
+
+                                <div className={style.friends_container}>
+
+                                    {classmates[key].map((friend) => (
+                                        <FriendCard key={friend._id} friend={friend} />
+                                    ))}
+
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+
+
+            </div>
 
 
                 {/*-----------Classmates and Classes------------*/}
-                {
+                {/* {
                     Object.keys(classmates).map((key, index) => {
 
                         // console.log("Key: index: ",key,index);
@@ -82,7 +111,7 @@ const Home = () => {
                             </div>
                         )
                     })
-                }
+                } */}
             </>
         )
     }

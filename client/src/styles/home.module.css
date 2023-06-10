@@ -1,71 +1,99 @@
-.home_page {
-    width: 100%;
-    margin: 0px;
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
-.mainpage {
+.main_container{
     width: 100%;
-    background-color: #F0EFED;
-}
+    min-height: 100vh;
 
-.background {
-    width: 100%;
-    height: auto;
-    background-color: #7FAAE8;
-    background-image: url('https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=70');
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-
-    display: flex;
-    background-position: center;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+
+    gap: 20px;
+
+    padding: 30px 10px;
 }
 
-.imagediv {
-    margin-top: 20px;
-    width: 250px;
-    height: 250px;
-}
-
-.imagediv img {
-    height: 250px;
-    width: 250px;
-    object-fit: cover;
-    display: block;
-    margin: auto;
-    border-radius: 50%;
-}
-
-.heading {
-    background-color: black;
-    color: white;
-    padding: 15px;
-}
-
-.container_div {
-
-    background-color: aliceblue;
-    padding: 20px;
+.profile_container{
+    max-width: 1000px;
     width: 100%;
+    min-height: 400px;
+    border-radius: 20px;
+    overflow: hidden;
 
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.3);
+}
+
+.bgimg_div{
+    width: 100%;
+    height: 240px;
+}
+
+.bg_img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info_div{
+    padding: 0px 30px 25px 30px;
+    font-size: 14px;
+}
+
+.profile_img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    margin-top: -75px;
+}
+
+.full_name{
+    font-size: 22px;
+}
+
+.user_insta{
+    text-decoration: none;
+    color: black;
+}
+
+.user_insta:hover{
+    color: #e11d96;
+    cursor: pointer;
+}
+
+.user_bio{
+    /* white-space: pre-wrap; */        /* This is for new line in bio */
+}
+
+/* Class Container */
+.class_container{
+    max-width: 1000px;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.3);
+}
+
+.class_heading{
+    background-color: rgb(26, 26, 26);
+    color: white;
+    padding: 10px 20px;
+    font-size: 22px;
+}
+
+
+/* Friends Card */
+.friends_container{
     display: flex;
     flex-wrap: wrap;
-
+    gap: 20px;
+    padding: 20px;
 }
 
-.heading1 {
-    margin-top: 20px;
-    color: white;
-}
-
-.heading5 {
-    margin: 7px 0 7px 0;
-    color: rgba(255, 255, 255, 0.685);
-}
