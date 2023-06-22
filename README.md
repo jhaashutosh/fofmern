@@ -1,4 +1,3 @@
-```
 # FOF (FIND OLD FRIENDS)
 
 Welcome to the FOF MERN project! FOF stands for "Find Old Friends," and this web application was designed to help you reconnect with your long-lost buddies from school or college. We're thrilled to present you with this personalized and creative project, brought to life by the collaborative efforts of Rahul Kumar, Ashutosh Jha, and Ashutosh Giri.
@@ -19,34 +18,30 @@ The project is organized into two main directories:
 To get started with FOF MERN, follow these steps:
 
 1. Clone the repository:
-   ```
    git clone https://github.com/iamrahul25/fofmern.git
-   ```
 2. Navigate to the project directory:
-   ```
    cd fofmern
-   ```
 3. Install the dependencies:
-   - Frontend:
-     ```
-     cd client && npm install
-     ```
-   - Backend:
-     ```
-     cd ../server && npm install
-     ```
+- Frontend:
+  ```
+  cd client && npm install
+  ```
+- Backend:
+  ```
+  cd ../server && npm install
+  ```
 4. Set up the environment variables:
-   - Create a `.env` file in the `server` directory.
-   - Define the necessary environment variables, such as database connection details and API keys. (Refer to the provided `.env.example` file.)
+- Create a `.env` file in the `server` directory.
+- Define the necessary environment variables, such as database connection details and API keys. (Refer to the provided `.env.example` file.)
 5. Start the development servers:
-   - Frontend:
-     ```
-     cd ../client && npm start
-     ```
-   - Backend:
-     ```
-     cd ../server && npm start
-     ```
+- Frontend:
+  ```
+  cd ../client && npm start
+  ```
+- Backend:
+  ```
+  cd ../server && npm start
+  ```
 6. Access the application in your web browser at `http://localhost:3000`.
 
 ## Features
@@ -65,11 +60,6 @@ The FOF MERN project utilizes the following technologies:
 - **Microsoft Azure:** Azure cloud services are used for storing user data, including profile images and posts. Azure Blob storage and containers ensure reliable and scalable data storage.
 - **Google Maps API:** The application integrates Google Maps API to perform efficient searches based on place IDs.
 - **MongoDB:** The project utilizes MongoDB as the database management system, leveraging indexing for faster data retrieval.
--
-
- **React:** The frontend is developed using React.js, providing a dynamic and interactive user interface.
-- **Express.js:** Express.js is used as the backend framework, enabling seamless routing and API creation.
-- **Node.js:** The project is powered by Node.js, providing a runtime environment for server-side code execution.
 
 ## Future Scope
 
@@ -104,4 +94,5 @@ If you have any questions, suggestions, or just want to say hello, feel free to 
 - Ashutosh Giri: [Email](mailto:ashutosh@example.com), [GitHub](https://github.com/ashutoshsinghgiri)
 
 Thank you for using FOF MERN! Let the reunion begin! 🎉
-```
+      
+   
